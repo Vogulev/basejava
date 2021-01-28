@@ -6,7 +6,8 @@ public class ArrayStorage {
 
     void clear() {
         //Arrays.fill(storage, null);
-        for (int i = 0; i < storage.length; i++) {
+        int storageSize = size();
+        for (int i = 0; i < storageSize; i++) {
             storage[i] = null;
         }
     }
