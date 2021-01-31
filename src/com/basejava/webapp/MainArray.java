@@ -1,3 +1,5 @@
+package com.basejava.webapp;
+
 import com.basejava.webapp.model.Resume;
 import com.basejava.webapp.storage.ArrayStorage;
 
@@ -35,7 +37,7 @@ public class MainArray {
                     break;
                 case "save":
                     r = new Resume();
-                    r.uuid = uuid;
+                    r.setUuid(uuid);
                     ARRAY_STORAGE.save(r);
                     printAll();
                     break;
