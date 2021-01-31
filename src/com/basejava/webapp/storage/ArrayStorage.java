@@ -1,3 +1,5 @@
+import com.basejava.webapp.model.Resume;
+
 import java.util.Arrays;
 
 /**
@@ -42,9 +44,7 @@ public class ArrayStorage {
      */
     Resume[] getAll() {
         Resume[] allResumes = new Resume[size];
-        for (int i = 0; i < size; i++) {
-            allResumes[i] = storage[i];
-        }
+        System.arraycopy(storage, 0, allResumes, 0, size);
         return allResumes;
     }
 
