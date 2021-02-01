@@ -7,8 +7,11 @@ import java.util.Arrays;
 /**
  * Array based storage for Resumes
  */
-public class ArrayStorage {
-    private final Resume[] storage = new Resume[10_000];
+public class ArrayStorage implements Storage{
+
+    private static final int STORAGE_LIMIT = 10_000;
+
+    private final Resume[] storage = new Resume[STORAGE_LIMIT];
     private int size = 0;
 
     public void clear() {
@@ -41,9 +44,6 @@ public class ArrayStorage {
         } else System.out.println("No resume with ID " + uuid + " for delete!");
     }
 
-    /**
-     * @return array, contains only Resumes in storage (without null)
-     */
     public Resume[] getAll() {
         Resume[] allResumes = new Resume[size];
         System.arraycopy(storage, 0, allResumes, 0, size);
