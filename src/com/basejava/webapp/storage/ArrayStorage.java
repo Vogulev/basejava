@@ -8,7 +8,7 @@ import java.util.Arrays;
  * Array based storage for Resumes
  */
 public class ArrayStorage {
-    private final Resume[] storage = new Resume[10000];
+    private final Resume[] storage = new Resume[10_000];
     private int size = 0;
 
     public void clear() {
@@ -16,15 +16,15 @@ public class ArrayStorage {
         size = 0;
     }
 
-    public void save(Resume r) {
-        if (size == 10000) {
+    public void save(Resume resume) {
+        if (size == storage.length) {
             System.out.println("ERROR! Storage is full!");
         }
-        else if (getIndex(r.getUuid()) == -1) {
-            storage[size] = r;
+        else if (getIndex(resume.getUuid()) == -1) {
+            storage[size] = resume;
             size++;
         }
-        else System.out.println("ERROR! Resume is already exist or storage is full!");
+        else System.out.println("ERROR! Resume with ID " + resume.getUuid() + " is already exist!");
     }
 
     public Resume get(String uuid) {
@@ -32,6 +32,7 @@ public class ArrayStorage {
         if (index != -1) {
             return storage[index];
         }
+        else System.out.println("ERROR! Resume with ID " + uuid + " not exist!");
         return null;
     }
 
@@ -57,12 +58,12 @@ public class ArrayStorage {
         return size;
     }
 
-    public void update(Resume r) {
-        int index = getIndex(r.getUuid());
+    public void update(Resume resume) {
+        int index = getIndex(resume.getUuid());
         if (index != -1) {
-            storage[index] = r;
+            storage[index] = resume;
         }
-        else System.out.println("No resume with ID " + r.getUuid() + " for update!");
+        else System.out.println("No resume with ID " + resume.getUuid() + " for update!");
     }
 
     public int getIndex(String uuid) {
