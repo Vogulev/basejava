@@ -1,5 +1,8 @@
 package ru.javawebinar.basejava.storage;
 
+import ru.javawebinar.basejava.exception.ExistStorageException;
+import ru.javawebinar.basejava.exception.NotExistStorageException;
+import ru.javawebinar.basejava.exception.StorageException;
 import ru.javawebinar.basejava.model.Resume;
 
 import java.util.Arrays;
@@ -17,11 +20,11 @@ public abstract class AbstractArrayStorage implements Storage {
     public void save(Resume resume) {
         int index = getIndex(resume.getUuid());
         if (size == storage.length) {
-            System.out.println("ERROR! Storage is full!");
+            throw new StorageException("Storage overflow", resume.getUuid());
         } else if (index < 0) {
             insertResume(resume, index);
             size++;
-        } else System.out.println("ERROR! Resume with ID " + resume.getUuid() + " is already exist!");
+        } else throw new ExistStorageException(resume.getUuid());
     }
 
     public void delete(String uuid) {
@@ -29,15 +32,14 @@ public abstract class AbstractArrayStorage implements Storage {
         if (index >= 0) {
             System.arraycopy(storage, index + 1, storage, index, size - index);
             size--;
-        } else System.out.println("No resume with ID " + uuid + " for delete!");
+        } else throw new NotExistStorageException(uuid);
     }
 
     public Resume get(String uuid) {
         int index = getIndex(uuid);
         if (index >= 0) {
             return storage[index];
-        } else System.out.println("ERROR! Resume with ID " + uuid + " not exist!");
-        return null;
+        } else throw new NotExistStorageException(uuid);
     }
 
     public void clear() {
@@ -55,7 +57,7 @@ public abstract class AbstractArrayStorage implements Storage {
         int index = getIndex(resume.getUuid());
         if (index >= 0) {
             storage[index] = resume;
-        } else System.out.println("No resume with ID " + resume.getUuid() + " for update!");
+        } else throw new NotExistStorageException(resume.getUuid());
     }
 
     protected abstract int getIndex(String uuid);
