@@ -5,15 +5,13 @@ import ru.javawebinar.basejava.model.Resume;
 /**
  * Array based storage for Resumes
  */
-public class ArrayStorage extends AbstractArrayStorage{
+public class ArrayStorage extends AbstractArrayStorage {
 
-    public void save(Resume resume) {
-        if (size == storage.length) {
-            System.out.println("ERROR! Storage is full!");
-        } else if (getIndex(resume.getUuid()) == -1) {
-            storage[size] = resume;
-            size++;
-        } else System.out.println("ERROR! Resume with ID " + resume.getUuid() + " is already exist!");
+
+    @Override
+    protected void insertResume(Resume resume) {
+        storage[size] = resume;
+        size++;
     }
 
     @Override

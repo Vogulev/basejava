@@ -6,15 +6,12 @@ import java.util.Arrays;
 
 public class SortedArrayStorage extends AbstractArrayStorage {
 
-    public void save(Resume resume) {
+    @Override
+    protected void insertResume(Resume resume) {
         int index = getIndex(resume.getUuid());
-        if (size == storage.length) {
-            System.out.println("ERROR! Storage is full!");
-        } else if (index < 0) {
-            System.arraycopy(storage, -index - 1, storage, -index, size);
-            storage[-index - 1] = resume;
-            size++;
-        } else System.out.println("ERROR! Resume with ID " + resume.getUuid() + " is already exist!");
+        System.arraycopy(storage, -index - 1, storage, -index, size);
+        storage[-index - 1] = resume;
+        size++;
     }
 
     @Override
