@@ -30,7 +30,7 @@ public abstract class AbstractArrayStorage implements Storage {
     public void delete(String uuid) {
         int index = getIndex(uuid);
         if (index >= 0) {
-            System.arraycopy(storage, index + 1, storage, index, size - index);
+            overrideElement(index);
             size--;
         } else throw new NotExistStorageException(uuid);
     }
@@ -60,7 +60,9 @@ public abstract class AbstractArrayStorage implements Storage {
         } else throw new NotExistStorageException(resume.getUuid());
     }
 
-    protected abstract int getIndex(String uuid);
-
     protected abstract void insertResume(Resume resume, int index);
+
+    protected abstract void overrideElement(int index);
+
+    protected abstract int getIndex(String uuid);
 }
