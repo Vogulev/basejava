@@ -27,6 +27,13 @@ public abstract class AbstractArrayStorage implements Storage {
         } else throw new ExistStorageException(resume.getUuid());
     }
 
+    public Resume get(String uuid) {
+        int index = getIndex(uuid);
+        if (index >= 0) {
+            return storage[index];
+        } else throw new NotExistStorageException(uuid);
+    }
+
     public void delete(String uuid) {
         int index = getIndex(uuid);
         if (index >= 0) {
@@ -36,12 +43,6 @@ public abstract class AbstractArrayStorage implements Storage {
         } else throw new NotExistStorageException(uuid);
     }
 
-    public Resume get(String uuid) {
-        int index = getIndex(uuid);
-        if (index >= 0) {
-            return storage[index];
-        } else throw new NotExistStorageException(uuid);
-    }
 
     public void clear() {
         Arrays.fill(storage, 0, size, null);
