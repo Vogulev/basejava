@@ -5,7 +5,6 @@ import org.junit.Before;
 import org.junit.Test;
 import ru.javawebinar.basejava.exception.ExistStorageException;
 import ru.javawebinar.basejava.exception.NotExistStorageException;
-import ru.javawebinar.basejava.exception.StorageException;
 import ru.javawebinar.basejava.model.Resume;
 
 public abstract class AbstractArrayStorageTest {
@@ -95,16 +94,4 @@ public abstract class AbstractArrayStorageTest {
         storage.update(resume4);
     }
 
-    @Test(expected = StorageException.class)
-    public void storageOverflow() {
-        storage.clear();
-        try {
-            for (int i = 0; i < AbstractArrayStorage.STORAGE_LIMIT; i++) {
-                storage.save(new Resume());
-            }
-        } catch (StorageException e) {
-            Assert.fail("Overflow too early!");
-        }
-        storage.save(new Resume());
-    }
 }
