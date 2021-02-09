@@ -1,7 +1,5 @@
 package ru.javawebinar.basejava.storage;
 
-import ru.javawebinar.basejava.exception.ExistStorageException;
-import ru.javawebinar.basejava.exception.NotExistStorageException;
 import ru.javawebinar.basejava.exception.StorageException;
 import ru.javawebinar.basejava.model.Resume;
 
@@ -17,32 +15,18 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
         return size;
     }
 
-    public void save(Resume resume) {
-        int index = getIndex(resume.getUuid());
-        if (size == storage.length) {
-            throw new StorageException("Storage overflow", resume.getUuid());
-        } else if (index < 0) {
-            insertResume(resume, index);
-            size++;
-        } else throw new ExistStorageException(resume.getUuid());
+    @Override
+    public void saveResume(Resume resume, int index) {
+        if (size == storage.length) throw new StorageException("Storage overflow", resume.getUuid());
+        insertResume(resume, index);
+        size++;
     }
 
-    public Resume get(String uuid) {
-        int index = getIndex(uuid);
-        if (index >= 0) {
-            return storage[index];
-        } else throw new NotExistStorageException(uuid);
+    @Override
+    public void deleteRes() {
+        storage[size - 1] = null;
+        size--;
     }
-
-    public void delete(String uuid) {
-        int index = getIndex(uuid);
-        if (index >= 0) {
-            deleteResume(index);
-            storage[size - 1] = null;
-            size--;
-        } else throw new NotExistStorageException(uuid);
-    }
-
 
     public void clear() {
         Arrays.fill(storage, 0, size, null);
@@ -55,16 +39,14 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
         return allResumes;
     }
 
-    public void update(Resume resume) {
-        int index = getIndex(resume.getUuid());
-        if (index >= 0) {
-            storage[index] = resume;
-        } else throw new NotExistStorageException(resume.getUuid());
+    @Override
+    public void updateResume(Resume resume, int index) {
+        storage[index] = resume;
     }
 
-    protected abstract void insertResume(Resume resume, int index);
+    @Override
+    public Resume returnResume(int index) {
+        return storage[index];
+    }
 
-    protected abstract void deleteResume(int index);
-
-    protected abstract int getIndex(String uuid);
 }

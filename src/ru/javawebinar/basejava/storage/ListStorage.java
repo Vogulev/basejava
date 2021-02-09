@@ -1,49 +1,31 @@
 package ru.javawebinar.basejava.storage;
 
-import ru.javawebinar.basejava.exception.ExistStorageException;
-import ru.javawebinar.basejava.exception.NotExistStorageException;
 import ru.javawebinar.basejava.model.Resume;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 public class ListStorage extends AbstractStorage {
     protected List<Resume> storage = new ArrayList<>();
-
 
     @Override
     public int size() {
         return storage.size();
     }
 
+
     @Override
-    public void save(Resume resume) {
-        if (storage.contains(resume)) {
-            throw new ExistStorageException(resume.getUuid());
-        }
+    protected void saveResume(Resume resume, int index) {
         storage.add(resume);
     }
 
     @Override
-    public Resume get(String uuid) {
-        for (Resume resume : storage) {
-            if (resume.getUuid().equals(uuid)) {
-                return resume;
-            }
-        }
-        throw new NotExistStorageException(uuid);
+    protected void deleteResume(int index) {
+        storage.remove(index);
     }
 
     @Override
-    public void delete(String uuid) {
-        Iterator<Resume> iterator = storage.iterator();
-        while (iterator.hasNext()) {
-            if (iterator.next().getUuid().equals(uuid)) {
-                iterator.remove();
-            }
-        }
-        throw new NotExistStorageException(uuid);
+    protected void deleteRes() {
     }
 
     @Override
@@ -57,10 +39,27 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    public void update(Resume resume) {
-        if (!storage.contains(resume)) {
-            throw new NotExistStorageException(resume.getUuid());
+    public void updateResume(Resume resume, int index) {
+        storage.set(index, resume);
+    }
+
+    @Override
+    public Resume returnResume(int index) {
+        return storage.get(index);
+    }
+
+    @Override
+    protected void insertResume(Resume resume, int index) {
+        storage.add(resume);
+    }
+
+    @Override
+    protected int getIndex(String uuid) {
+        for (Resume resume : storage) {
+            if (resume.getUuid().equals(uuid)) {
+                return storage.indexOf(resume);
+            }
         }
-        storage.set(storage.indexOf(resume), resume);
+        return -1;
     }
 }
