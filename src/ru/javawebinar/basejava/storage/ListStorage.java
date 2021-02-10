@@ -6,13 +6,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ListStorage extends AbstractStorage {
-    protected List<Resume> storage = new ArrayList<>();
+    private List<Resume> storage = new ArrayList<>();
 
-    @Override
     public int size() {
         return storage.size();
     }
 
+    public void clear() {
+        storage.clear();
+    }
+
+    public Resume[] getAll() {
+        return storage.toArray(new Resume[0]);
+    }
 
     @Override
     protected void saveResume(Resume resume, int index) {
@@ -20,22 +26,8 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    protected void deleteResume(int index) {
+    protected void deleteRes(int index) {
         storage.remove(index);
-    }
-
-    @Override
-    protected void deleteRes() {
-    }
-
-    @Override
-    public void clear() {
-        storage.clear();
-    }
-
-    @Override
-    public Resume[] getAll() {
-        return storage.toArray(new Resume[0]);
     }
 
     @Override
@@ -46,11 +38,6 @@ public class ListStorage extends AbstractStorage {
     @Override
     public Resume returnResume(int index) {
         return storage.get(index);
-    }
-
-    @Override
-    protected void insertResume(Resume resume, int index) {
-        storage.add(resume);
     }
 
     @Override
