@@ -36,8 +36,8 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     }
 
     @Override
-    public void deleteRes(int index) {
-        deleteResume(index);
+    public void deleteResume(int index) {
+        arrayDeleteResume(index);
         storage[size - 1] = null;
         size--;
     }
@@ -54,6 +54,6 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
 
     protected abstract void insertResume(Resume resume, int index);
 
-    protected abstract void deleteResume(int index);
+    protected abstract void arrayDeleteResume(int index);
 
 }
