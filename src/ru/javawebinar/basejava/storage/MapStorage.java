@@ -39,7 +39,7 @@ public class MapStorage extends AbstractStorage {
     }
 
     @Override
-    protected Resume returnResume(int index) {
+    protected Resume receiveResume(int index) {
         return storage.get(index);
     }
 

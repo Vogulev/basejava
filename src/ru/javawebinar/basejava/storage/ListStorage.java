@@ -36,7 +36,7 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    public Resume returnResume(int index) {
+    public Resume receiveResume(int index) {
         return storage.get(index);
     }
 

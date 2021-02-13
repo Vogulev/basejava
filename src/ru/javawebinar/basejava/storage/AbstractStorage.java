@@ -7,32 +7,19 @@ import ru.javawebinar.basejava.model.Resume;
 public abstract class AbstractStorage implements Storage {
 
     public Resume get(String uuid) {
-        int index = getIndex(uuid);
-        if (index >= 0) {
-            return returnResume(index);
-        }
-        throw new NotExistStorageException(uuid);
+        return receiveResume(workWithIndexAboveZero(uuid));
     }
 
     public void save(Resume resume) {
-        int index = getIndex(resume.getUuid());
-        if (index < 0) {
-            saveResume(resume, index);
-        } else throw new ExistStorageException(resume.getUuid());
+        saveResume(resume, workWithIndexBelowOrEqualsZero(resume.getUuid()));
     }
 
     public void delete(String uuid) {
-        int index = getIndex(uuid);
-        if (index >= 0) {
-            deleteResume(index);
-        } else throw new NotExistStorageException(uuid);
+        deleteResume(workWithIndexAboveZero(uuid));
     }
 
     public void update(Resume resume) {
-        int index = getIndex(resume.getUuid());
-        if (index >= 0) {
-            updateResume(resume, index);
-        } else throw new NotExistStorageException(resume.getUuid());
+        updateResume(resume, workWithIndexAboveZero(resume.getUuid()));
     }
 
     protected abstract void saveResume(Resume resume, int index);
@@ -41,7 +28,19 @@ public abstract class AbstractStorage implements Storage {
 
     protected abstract void updateResume(Resume resume, int index);
 
-    protected abstract Resume returnResume(int index);
+    protected abstract Resume receiveResume(int index);
 
     protected abstract int getIndex(String uuid);
+
+    private int workWithIndexAboveZero(String uuid) {
+        int index = getIndex(uuid);
+        if (index < 0) throw new NotExistStorageException(uuid);
+        else return index;
+    }
+
+    private int workWithIndexBelowOrEqualsZero(String uuid) {
+        int index = getIndex(uuid);
+        if (index >= 0) throw new ExistStorageException(uuid);
+        else return index;
+    }
 }
