@@ -22,6 +22,11 @@ public class MapResumeStorage extends AbstractMapStorage {
     }
 
     @Override
+    protected boolean isExist(Object searchKey) {
+        return searchKey != null;
+    }
+
+    @Override
     protected void doUpdate(Resume resume, Object searchKey) {
         storage.replace(resume.getUuid(), resume);
     }

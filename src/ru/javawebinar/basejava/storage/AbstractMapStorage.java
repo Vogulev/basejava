@@ -16,11 +16,6 @@ public abstract class AbstractMapStorage extends AbstractStorage {
     }
 
     @Override
-    protected boolean isExist(Object searchKey) {
-        return searchKey != null;
-    }
-
-    @Override
     public int size() {
         return storage.size();
     }

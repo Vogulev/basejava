@@ -2,8 +2,6 @@ package ru.javawebinar.basejava.storage;
 
 import ru.javawebinar.basejava.model.Resume;
 
-import java.util.Map;
-
 public class MapUuidStorage extends AbstractMapStorage {
 
     @Override
@@ -13,7 +11,7 @@ public class MapUuidStorage extends AbstractMapStorage {
 
     @Override
     protected void doSave(Resume resume, Object searchKey) {
-        storage.put(String.valueOf(storage.size()), resume);
+        storage.put((String) searchKey, resume);
     }
 
     @Override
@@ -23,18 +21,16 @@ public class MapUuidStorage extends AbstractMapStorage {
 
     @Override
     protected void doUpdate(Resume resume, Object searchKey) {
-        storage.replace(searchKey.toString(), resume);
+        storage.replace((String) searchKey, resume);
     }
 
+    @Override
+    protected boolean isExist(Object searchKey) {
+        return storage.containsKey(searchKey);
+    }
 
     @Override
     protected Object getSearchKey(String uuid) {
-        for (Map.Entry<String, Resume> pair : storage.entrySet()) {
-            String searchUuid = pair.getValue().getUuid();
-            if (uuid.equals(searchUuid)) {
-                return pair.getKey();
-            }
-        }
-        return null;
+        return uuid;
     }
 }

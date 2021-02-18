@@ -20,10 +20,10 @@ public abstract class AbstractStorageTest {
     private static final String UUID3 = "uuid3";
     private static final String UUID4 = "uuid4";
 
-    private static final Resume resume1 = new Resume(UUID1, "Vasiliy Ivanovich Ivanov");
-    private static final Resume resume2 = new Resume(UUID2, "Petrov Petr Petrovich");
-    private static final Resume resume3 = new Resume(UUID3, "Ivanov Vasiliy Antonovich");
-    private static final Resume resume4 = new Resume(UUID4, "Gorka Man Womanovich");
+    private static final Resume resume1 = new Resume(UUID1, "Name" + UUID1);
+    private static final Resume resume2 = new Resume(UUID2, "Name" + UUID2);
+    private static final Resume resume3 = new Resume(UUID3, "Name" + UUID3);
+    private static final Resume resume4 = new Resume(UUID4, "Name" + UUID4);
 
     public AbstractStorageTest(Storage storage) {
         this.storage = storage;
@@ -90,9 +90,7 @@ public abstract class AbstractStorageTest {
         resumes.add(resume2);
         resumes.add(resume3);
         Collections.sort(resumes);
-        for (int i = 0; i < resumes.size(); i++) {
-            Assert.assertEquals(getAllSortedResumes.get(i), resumes.get(i));
-        }
+        Assert.assertEquals(getAllSortedResumes, resumes);
     }
 
     @Test
