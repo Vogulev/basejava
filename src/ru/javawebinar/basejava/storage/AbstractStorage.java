@@ -4,43 +4,61 @@ import ru.javawebinar.basejava.exception.ExistStorageException;
 import ru.javawebinar.basejava.exception.NotExistStorageException;
 import ru.javawebinar.basejava.model.Resume;
 
+import java.util.Collections;
+import java.util.List;
+
 public abstract class AbstractStorage implements Storage {
 
     public Resume get(String uuid) {
-        return receiveResume(getIndexIfResumeExist(uuid));
+        Object searchKey = getSearchKeyIfResumeExist(uuid);
+        return doGet(searchKey);
     }
 
     public void save(Resume resume) {
-        saveResume(resume, getIndexIfResumeNotExist(resume.getUuid()));
+        Object searchKey = getSearchKeyIfResumeNotExist(resume.getUuid());
+        doSave(resume, searchKey);
     }
 
     public void delete(String uuid) {
-        deleteResume(getIndexIfResumeExist(uuid));
+        Object searchKey = getSearchKeyIfResumeExist(uuid);
+        doDelete(searchKey);
     }
 
     public void update(Resume resume) {
-        updateResume(resume, getIndexIfResumeExist(resume.getUuid()));
+        Object searchKey = getSearchKeyIfResumeExist(resume.getUuid());
+        doUpdate(resume, searchKey);
     }
 
-    protected abstract void saveResume(Resume resume, int index);
-
-    protected abstract void deleteResume(int index);
-
-    protected abstract void updateResume(Resume resume, int index);
-
-    protected abstract Resume receiveResume(int index);
-
-    protected abstract int getIndex(String uuid);
-
-    private int getIndexIfResumeExist(String uuid) {
-        int index = getIndex(uuid);
-        if (index < 0) throw new NotExistStorageException(uuid);
-        return index;
+    @Override
+    public List<Resume> getAllSorted() {
+        List<Resume> result = getListFromStorage();
+        Collections.sort(result);
+        return result;
     }
 
-    private int getIndexIfResumeNotExist(String uuid) {
-        int index = getIndex(uuid);
-        if (index >= 0) throw new ExistStorageException(uuid);
-        return index;
+    protected abstract Resume doGet(Object searchKey);
+
+    protected abstract void doSave(Resume resume, Object searchKey);
+
+    protected abstract void doDelete(Object searchKey);
+
+    protected abstract void doUpdate(Resume resume, Object searchKey);
+
+    protected abstract Object getSearchKey(String uuid);
+
+    protected abstract List<Resume> getListFromStorage();
+
+    protected abstract boolean isExist(Object searchKey);
+
+    private Object getSearchKeyIfResumeExist(String uuid) {
+        Object searchKey = getSearchKey(uuid);
+        if (!isExist(searchKey)) throw new NotExistStorageException(uuid);
+        return searchKey;
+    }
+
+    private Object getSearchKeyIfResumeNotExist(String uuid) {
+        Object searchKey = getSearchKey(uuid);
+        if (isExist(searchKey)) throw new ExistStorageException(uuid);
+        return searchKey;
     }
 }
