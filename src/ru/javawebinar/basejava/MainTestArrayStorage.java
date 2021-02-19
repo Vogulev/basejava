@@ -11,9 +11,9 @@ public class MainTestArrayStorage {
     static final Storage ARRAY_STORAGE = new SortedArrayStorage();
 
     public static void main(String[] args) {
-        Resume r1 = new Resume("uuid1", null);
-        Resume r2 = new Resume("uuid2", null);
-        Resume r3 = new Resume("uuid3", null);
+        Resume r1 = new Resume("uuid1", "NAMEuuid1");
+        Resume r2 = new Resume("uuid2", "NAMEuuid2");
+        Resume r3 = new Resume("uuid3", "NAMEuuid3");
 
         ARRAY_STORAGE.save(r3);
         ARRAY_STORAGE.save(r1);

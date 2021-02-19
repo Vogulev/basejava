@@ -6,34 +6,35 @@ public class MapResumeStorage extends AbstractMapStorage {
 
 
     @Override
-    protected Resume doGet(Object searchKey) {
-        return (Resume) searchKey;
+    protected Resume doGet(Object resume) {
+        return (Resume) resume;
     }
 
     @Override
-    protected void doSave(Resume resume, Object searchKey) {
-        storage.put(resume.getUuid(), resume);
+    protected void doSave(Resume saveResume, Object resume) {
+        storage.put(saveResume.getUuid(), saveResume);
     }
 
     @Override
-    protected void doDelete(Object searchKey) {
-        String uuid = ((Resume) searchKey).getUuid();
+    protected void doDelete(Object resume) {
+        String uuid = ((Resume) resume).getUuid();
         storage.remove(uuid);
     }
 
     @Override
-    protected boolean isExist(Object searchKey) {
-        return searchKey != null;
+    protected boolean isExist(Object resume) {
+        return resume != null;
     }
 
     @Override
-    protected void doUpdate(Resume resume, Object searchKey) {
-        storage.replace(resume.getUuid(), resume);
+    protected void doUpdate(Resume updateResume, Object resume) {
+        storage.replace(updateResume.getUuid(), updateResume);
     }
 
     @Override
-    protected Object getSearchKey(String uuid) {
+    protected Resume getSearchKey(String uuid) {
         return storage.get(uuid);
     }
 
 }
+ 
