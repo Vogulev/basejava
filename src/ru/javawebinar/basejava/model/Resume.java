@@ -46,8 +46,8 @@ public class Resume implements Comparable<Resume> {
         contacts.put(contactType, contact);
     }
 
-    public void addTextSection(SectionType sectionType, String textArea) {
-        sections.put(sectionType, new TextSection(textArea));
+    public void addTextSection(SectionType sectionType, String content) {
+        sections.put(sectionType, new TextSection(content));
     }
 
     public void addListSection(SectionType sectionType, List<String> content) {
@@ -58,14 +58,14 @@ public class Resume implements Comparable<Resume> {
         if (experience == null) {
             experience = new Organization(companyName, date, position, description);
             sections.put(sectionType, experience);
-        } else experience.experience.add(new Organization.Experience(companyName, date, position, description));
+        } else experience.addContent(companyName, date, position, description);
     }
 
     public void addEducationSection(SectionType sectionType, String companyName, String date, String position, String description) {
         if (education == null) {
             education = new Organization(companyName, date, position, description);
             sections.put(sectionType, education);
-        } else education.experience.add(new Organization.Experience(companyName, date, position, description));
+        } else education.addContent(companyName, date, position, description);
     }
 
     @Override
@@ -92,66 +92,5 @@ public class Resume implements Comparable<Resume> {
     public int compareTo(Resume o) {
         int result = fullName.compareTo(o.fullName);
         return result == 0 ? uuid.compareTo(o.uuid) : result;
-    }
-
-    static abstract class AbstractSection {
-        public abstract void getContent();
-    }
-
-    class TextSection extends AbstractSection {
-        private final String textArea;
-
-        public TextSection(String textArea) {
-            this.textArea = textArea;
-        }
-
-        public void getContent() {
-            System.out.println(textArea);
-        }
-    }
-
-    class ListSection extends AbstractSection {
-        private final List<String> content;
-
-        public ListSection(List<String> content) {
-            this.content = content;
-        }
-
-        @Override
-        public void getContent() {
-            for (String text : content) {
-                System.out.println("- " + text);
-            }
-        }
-
-    }
-
-    static class Organization extends AbstractSection {
-        private final List<Experience> experience = new ArrayList<>();
-
-        public Organization(String companyName, String date, String position, String description) {
-            experience.add(new Experience(companyName, date, position, description));
-        }
-
-        @Override
-        public void getContent() {
-            for (Experience exp : experience) {
-                System.out.println(exp.companyName + "\n" + exp.date + " | " + exp.position + "\n" + exp.description);
-            }
-        }
-
-        static class Experience {
-            private final String companyName;
-            private final String date;
-            private final String position;
-            private final String description;
-
-            public Experience(String companyName, String date, String position, String description) {
-                this.companyName = companyName;
-                this.date = date;
-                this.position = position;
-                this.description = description;
-            }
-        }
     }
 }

@@ -19,7 +19,7 @@ public class ResumeTestData {
         resume.addContact(ContactType.GITHUB, "https://github.com/gkislin");
         resume.addContact(ContactType.STACKOVERFLOW, "https://stackoverflow.com/users/548473/grigory-kislin");
         resume.addContact(ContactType.HOMEPAGE, "http://gkislin.ru/");
-        //Fill resume section fields
+        //Fill resume ListSection fields
         resume.addTextSection(SectionType.OBJECTIVE, "Ведущий стажировок и корпоративного обучения по Java Web и Enterprise технологиям");
         resume.addTextSection(SectionType.PERSONAL, "Аналитический склад ума, сильная логика, креативность, инициативность. Пурист кода и архитектуры.");
         resume.addListSection(SectionType.ACHIEVEMENT, new ArrayList<>(Arrays.asList(
@@ -44,6 +44,7 @@ public class ResumeTestData {
                 "администрирование Hudson/Jenkins, Ant + custom task, SoapUI, JPublisher, Flyway, Nagios, iReport, OpenCmis, Bonita, pgBouncer.",
                 "Отличное знание и опыт применения концепций ООП, SOA, шаблонов проектрирования, архитектурных шаблонов, UML, функционального программирования",
                 "Родной русский, английский \"upper intermediate\"")));
+        //Fill resume Organization fields
         resume.addExperienceSection(SectionType.EXPERIENCE, "http://javaops.ru/", "10/2013 - Сейчас", "Автор проекта.",
                 "Создание, организация и проведение Java онлайн проектов и стажировок.");
         resume.addExperienceSection(SectionType.EXPERIENCE, "https://www.wrike.com/", "10/2014 - 01/2016", "Старший разработчик (backend)",
@@ -67,7 +68,7 @@ public class ResumeTestData {
         resume.addEducationSection(SectionType.EDUCATION, "http://www.ifmo.ru/", "09/1993 - 07/1996", "Аспирантура (программист С, С++)", "");
         resume.addEducationSection(SectionType.EDUCATION, "", "09/1987 - 07/1993", "Инженер (программист Fortran, C)", "");
         resume.addEducationSection(SectionType.EDUCATION, "http://www.school.mipt.ru/", "09/1984 - 06/1987", "Закончил с отличием", "");
-
+        //Print all contacts and sections
         resume.printContacts();
         System.out.println();
         resume.printSections();
