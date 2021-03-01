@@ -2,7 +2,7 @@ package ru.javawebinar.basejava.model;
 
 import java.util.List;
 
-class ListSection extends AbstractSection {
+public class ListSection extends AbstractSection {
     private final List<String> contentList;
 
     public ListSection(List<String> contentList) {
@@ -10,9 +10,11 @@ class ListSection extends AbstractSection {
     }
 
     @Override
-    public void getContent() {
-        for (String text : contentList) {
-            System.out.println("- " + text);
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for (String str : contentList) {
+            sb.append("\n").append("- ").append(str);
         }
+        return sb.toString() + '\n';
     }
 }

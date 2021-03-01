@@ -1,27 +1,24 @@
 package ru.javawebinar.basejava.model;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Organization extends AbstractSection {
-    private final List<Experience> experience = new ArrayList<>();
+    private final List<Experience> experience;
 
-    public Organization(String companyName, String date, String position, String description) {
-        experience.add(new Experience(companyName, date, position, description));
+    public Organization(List<Experience> experience) {
+        this.experience = experience;
     }
 
     @Override
-    public void getContent() {
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
         for (Experience exp : experience) {
-            System.out.println(exp.companyName + "\n" + exp.date + " | " + exp.position + "\n" + exp.description);
+            sb.append(exp.toString());
         }
+        return sb.toString() + '\n';
     }
 
-    public void addContent(String companyName, String date, String position, String description) {
-        experience.add(new Experience(companyName, date, position, description));
-    }
-
-    static class Experience {
+    public static class Experience {
         private final String companyName;
         private final String date;
         private final String position;
@@ -32,6 +29,15 @@ public class Organization extends AbstractSection {
             this.date = date;
             this.position = position;
             this.description = description;
+        }
+
+        @Override
+        public String toString() {
+            return '\n' +
+                    companyName + '\n' +
+                    date + '\n' +
+                    position + '\n' +
+                    description;
         }
     }
 }

@@ -1,6 +1,9 @@
 package ru.javawebinar.basejava.model;
 
-import java.util.*;
+import java.util.EnumMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
 
 /**
  * Initial resume class
@@ -11,8 +14,6 @@ public class Resume implements Comparable<Resume> {
     private final String fullName;
     private final Map<ContactType, String> contacts = new EnumMap<>(ContactType.class);
     private final Map<SectionType, AbstractSection> sections = new EnumMap<>(SectionType.class);
-    private Organization experience;
-    private Organization education;
 
     public Resume(String fullName) {
         this(UUID.randomUUID().toString(), fullName);
@@ -29,63 +30,38 @@ public class Resume implements Comparable<Resume> {
         return uuid;
     }
 
-    public void printContacts() {
-        for (Map.Entry<ContactType, String> pair : contacts.entrySet()) {
-            System.out.println(pair.getKey().getTitle() + " " + pair.getValue());
-        }
-    }
-
-    public void printSections() {
-        for (Map.Entry<SectionType, AbstractSection> pair : sections.entrySet()) {
-            System.out.println(pair.getKey().getTitle());
-            pair.getValue().getContent();
-        }
-    }
-
-    public void addContact(ContactType contactType, String contact) {
+    public void setContacts(ContactType contactType, String contact) {
         contacts.put(contactType, contact);
     }
 
-    public void addTextSection(SectionType sectionType, String content) {
-        sections.put(sectionType, new TextSection(content));
-    }
-
-    public void addListSection(SectionType sectionType, List<String> content) {
-        sections.put(sectionType, new ListSection(content));
-    }
-
-    public void addExperienceSection(SectionType sectionType, String companyName, String date, String position, String description) {
-        if (experience == null) {
-            experience = new Organization(companyName, date, position, description);
-            sections.put(sectionType, experience);
-        } else experience.addContent(companyName, date, position, description);
-    }
-
-    public void addEducationSection(SectionType sectionType, String companyName, String date, String position, String description) {
-        if (education == null) {
-            education = new Organization(companyName, date, position, description);
-            sections.put(sectionType, education);
-        } else education.addContent(companyName, date, position, description);
+    public void setSections(SectionType sectionType, AbstractSection section) {
+        sections.put(sectionType, section);
     }
 
     @Override
     public String toString() {
-        return uuid + '(' + fullName + ')';
+        StringBuilder contactsBuilder = new StringBuilder();
+        for (Map.Entry<ContactType, String> pair : contacts.entrySet()) {
+            contactsBuilder.append('\n').append(pair.getKey().getTitle()).append(" - ").append(pair.getValue());
+        }
+        return "Resume" +
+                "\nuuid='" + uuid + "'\n" +
+                "ФИО:  " + fullName + '\n' +
+                contactsBuilder.toString() + '\n' +
+                sections;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         Resume resume = (Resume) o;
-
-        return uuid.equals(resume.uuid);
+        return Objects.equals(uuid, resume.uuid) && Objects.equals(fullName, resume.fullName) && Objects.equals(contacts, resume.contacts) && Objects.equals(sections, resume.sections);
     }
 
     @Override
     public int hashCode() {
-        return uuid.hashCode();
+        return Objects.hash(uuid, fullName, contacts, sections);
     }
 
     @Override

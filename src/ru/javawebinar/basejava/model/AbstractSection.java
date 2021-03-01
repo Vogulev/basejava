@@ -1,5 +1,8 @@
 package ru.javawebinar.basejava.model;
 
 abstract class AbstractSection {
-    public abstract void getContent();
+    @Override
+    public String toString() {
+        return super.toString();
+    }
 }
