@@ -2,11 +2,13 @@ package ru.javawebinar.basejava.model;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 
 public class Organization extends AbstractSection {
     private final List<Experience> experience;
 
     public Organization(List<Experience> experience) {
+        Objects.requireNonNull(experience, "experience must not be null");
         this.experience = experience;
     }
 
@@ -19,6 +21,19 @@ public class Organization extends AbstractSection {
         return sb.toString() + '\n';
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Organization that = (Organization) o;
+        return experience.equals(that.experience);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(experience);
+    }
+
     public static class Experience {
         private final String companyName;
         private final LocalDate beginDate;
@@ -27,6 +42,8 @@ public class Organization extends AbstractSection {
         private final String description;
 
         public Experience(String companyName, LocalDate beginDate, LocalDate endDate, String position, String description) {
+            Objects.requireNonNull(beginDate, "experience must not be null");
+            Objects.requireNonNull(position, "experience must not be null");
             this.companyName = companyName;
             this.beginDate = beginDate;
             this.endDate = endDate;
@@ -42,6 +59,19 @@ public class Organization extends AbstractSection {
                     " по " + endDate + '\n' +
                     position + '\n' +
                     description;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Experience that = (Experience) o;
+            return Objects.equals(companyName, that.companyName) && beginDate.equals(that.beginDate) && Objects.equals(endDate, that.endDate) && position.equals(that.position) && Objects.equals(description, that.description);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(companyName, beginDate, endDate, position, description);
         }
     }
 }
