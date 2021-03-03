@@ -10,7 +10,7 @@ import java.util.Arrays;
 
 public class ResumeTestData {
 
-    public Resume createResume(String uuid, String fullName) {
+    public static Resume createResume(String uuid, String fullName) {
         Resume resume = new Resume(uuid, fullName);
         resume.setContacts(ContactType.TELEPHONE, "+7(921) 855-0482");
         resume.setContacts(ContactType.SKYPE, "grigory.kislin");
@@ -100,7 +100,7 @@ public class ResumeTestData {
         )))));
         return resume;
     }
-    
+
     public static void main(String[] args) {
         Resume resume = new Resume("Григорий Кислин");
         //Fill resume contact fields
