@@ -35,16 +35,16 @@ public class Organization extends AbstractSection {
     }
 
     public static class Experience {
-        private final String companyName;
+        private final Link companyName;
         private final LocalDate beginDate;
         private final LocalDate endDate;
         private final String position;
         private final String description;
 
-        public Experience(String companyName, LocalDate beginDate, LocalDate endDate, String position, String description) {
+        public Experience(String companyName, String url, LocalDate beginDate, LocalDate endDate, String position, String description) {
             Objects.requireNonNull(beginDate, "experience must not be null");
             Objects.requireNonNull(position, "experience must not be null");
-            this.companyName = companyName;
+            this.companyName = new Link(companyName, url);
             this.beginDate = beginDate;
             this.endDate = endDate;
             this.position = position;
@@ -54,7 +54,7 @@ public class Organization extends AbstractSection {
         @Override
         public String toString() {
             return '\n' +
-                    companyName + '\n' +
+                    companyName.getUrl() + '\n' +
                     "с " + beginDate +
                     " по " + endDate + '\n' +
                     position + '\n' +
