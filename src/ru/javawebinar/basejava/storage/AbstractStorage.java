@@ -13,32 +13,32 @@ public abstract class AbstractStorage<SK> implements Storage {
     private static final Logger LOG = Logger.getLogger(AbstractStorage.class.getName());
 
     public Resume get(String uuid) {
-        LOG.info("Get " + uuid);
+        LOG.fine("Get " + uuid);
         SK searchKey = getSearchKeyIfResumeExist(uuid);
         return doGet(searchKey);
     }
 
     public void save(Resume resume) {
-        LOG.info("Save " + resume);
+        LOG.fine("Save " + resume);
         SK searchKey = getSearchKeyIfResumeNotExist(resume.getUuid());
         doSave(resume, searchKey);
     }
 
     public void delete(String uuid) {
-        LOG.info("Delete " + uuid);
+        LOG.fine("Delete " + uuid);
         SK searchKey = getSearchKeyIfResumeExist(uuid);
         doDelete(searchKey);
     }
 
     public void update(Resume resume) {
-        LOG.info("Update " + resume);
+        LOG.fine("Update " + resume);
         SK searchKey = getSearchKeyIfResumeExist(resume.getUuid());
         doUpdate(resume, searchKey);
     }
 
     @Override
     public List<Resume> getAllSorted() {
-        LOG.info("GetAllSorted");
+        LOG.fine("GetAllSorted");
         List<Resume> result = getListFromStorage();
         Collections.sort(result);
         return result;

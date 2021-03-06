@@ -64,10 +64,9 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
     }
 
     @Override
-    @SuppressWarnings("all")
     protected List<Resume> getListFromStorage() {
         List<Resume> resumeList = new ArrayList<>();
-        for (File file : directory.listFiles()) {
+        for (File file : Objects.requireNonNull(directory.listFiles())) {
             resumeList.add(doRead(file));
         }
         return resumeList;
@@ -79,10 +78,9 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
     }
 
     @Override
-    @SuppressWarnings("all")
     public int size() {
         int size = 0;
-        for (File file : directory.listFiles()) {
+        for (File file : Objects.requireNonNull(directory.listFiles())) {
             if (!file.isDirectory()) size++;
         }
         return size;
@@ -91,7 +89,7 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
     @Override
     @SuppressWarnings("all")
     public void clear() {
-        for (File file : directory.listFiles()) {
+        for (File file : Objects.requireNonNull(directory.listFiles())) {
             file.delete();
         }
     }
