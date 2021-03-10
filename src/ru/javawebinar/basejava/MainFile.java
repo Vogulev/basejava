@@ -12,8 +12,11 @@ public class MainFile {
         File[] list = dir.listFiles();
         if (list != null) {
             for (File file : list) {
-                System.out.println(file.getName());
+                if (file.isFile()) {
+                    System.out.println("File: " + file.getName());
+                }
                 if (file.isDirectory()) {
+                    System.out.println("Directory: " + file.getName());
                     walkFileTree(file);
                 }
             }
