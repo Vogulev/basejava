@@ -1,10 +1,15 @@
 package ru.javawebinar.basejava.model;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
 public class Organization extends AbstractSection {
+    @Serial
+    private static final long serialVersionUID = 1L;
+
     private final List<Experience> experience;
 
     public Organization(Experience... experiences) {
@@ -38,7 +43,10 @@ public class Organization extends AbstractSection {
         return Objects.hash(experience);
     }
 
-    public static class Experience {
+    public static class Experience implements Serializable {
+        @Serial
+        private static final long serialVersionUID = 1L;
+
         private final Link companyName;
         private final List<Position> position;
 
