@@ -1,7 +1,12 @@
 package ru.javawebinar.basejava.model;
 
+import ru.javawebinar.basejava.util.DateUtil;
+
 import java.time.LocalDate;
+import java.time.Month;
 import java.util.Objects;
+
+import static ru.javawebinar.basejava.util.DateUtil.NOW;
 
 public class Position {
     private LocalDate beginDate;
@@ -9,9 +14,18 @@ public class Position {
     private String position;
     private String description;
 
+    public Position(int beginYear, Month beginMonth, String position, String description) {
+        this(DateUtil.of(beginYear, beginMonth), NOW, position, description);
+    }
+
+    public Position(int beginYear, Month beginMonth, int endYear, Month endMonth, String position, String description) {
+        this(DateUtil.of(beginYear, beginMonth), DateUtil.of(endYear, endMonth), position, description);
+    }
+
     public Position(LocalDate beginDate, LocalDate endDate, String position, String description) {
-        Objects.requireNonNull(beginDate, "Дата не может быть null");
-        Objects.requireNonNull(endDate, "Дата конца не может быть null");
+        Objects.requireNonNull(beginDate, "beginDate must not be null");
+        Objects.requireNonNull(endDate, "endDate must not be null!");
+        Objects.requireNonNull(position, "Position must not be null!");
         this.beginDate = beginDate;
         this.endDate = endDate;
         this.position = position;

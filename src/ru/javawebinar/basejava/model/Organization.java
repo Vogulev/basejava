@@ -1,10 +1,15 @@
 package ru.javawebinar.basejava.model;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
 public class Organization extends AbstractSection {
     private final List<Experience> experience;
+
+    public Organization(Experience... experiences) {
+        this(Arrays.asList(experiences));
+    }
 
     public Organization(List<Experience> experience) {
         Objects.requireNonNull(experience, "experience must not be null");
@@ -36,6 +41,10 @@ public class Organization extends AbstractSection {
     public static class Experience {
         private final Link companyName;
         private final List<Position> position;
+
+        public Experience(String title, String url, Position... positions) {
+            this(new Link(title, url), Arrays.asList(positions));
+        }
 
         public Experience(Link link, List<Position> position) {
             this.companyName = link;
