@@ -10,9 +10,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public abstract class AbstractPathStorage extends AbstractStorage<Path> {
     private final Path directory;
@@ -79,7 +77,7 @@ public abstract class AbstractPathStorage extends AbstractStorage<Path> {
             pathList = Files.walk(directory)
                     .filter(Files::isRegularFile)
                     .collect(Collectors.toList());
-            for (Path path: pathList) {
+            for (Path path : pathList) {
                 resumeList.add(doGet(path));
             }
         } catch (IOException e) {
