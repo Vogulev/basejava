@@ -6,6 +6,7 @@ import ru.javawebinar.basejava.model.Resume;
 import java.io.*;
 
 public class ObjectStreamPathStorage extends AbstractPathStorage {
+
     protected ObjectStreamPathStorage(String dir) {
         super(dir);
     }
