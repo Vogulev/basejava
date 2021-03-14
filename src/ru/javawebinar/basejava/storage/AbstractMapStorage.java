@@ -11,7 +11,7 @@ public abstract class AbstractMapStorage<SK> extends AbstractStorage<SK> {
     protected Map<String, Resume> storage = new HashMap<>();
 
     @Override
-    protected List<Resume> getListFromStorage() {
+    protected List<Resume> getAll() {
         return new ArrayList<>(storage.values());
     }
 

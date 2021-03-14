@@ -39,7 +39,7 @@ public abstract class AbstractStorage<SK> implements Storage {
     @Override
     public List<Resume> getAllSorted() {
         LOG.fine("GetAllSorted");
-        List<Resume> result = getListFromStorage();
+        List<Resume> result = getAll();
         Collections.sort(result);
         return result;
     }
@@ -54,7 +54,7 @@ public abstract class AbstractStorage<SK> implements Storage {
 
     protected abstract SK getSearchKey(String uuid);
 
-    protected abstract List<Resume> getListFromStorage();
+    protected abstract List<Resume> getAll();
 
     protected abstract boolean isExist(SK searchKey);
 

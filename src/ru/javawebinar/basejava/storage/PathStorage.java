@@ -26,18 +26,10 @@ public class PathStorage extends AbstractStorage<Path> {
         this.saveStrategy = saveStrategy;
     }
 
-    protected void doWrite(Resume resume, OutputStream os) throws IOException {
-        saveStrategy.doWrite(resume, os);
-    }
-
-    protected Resume doRead(InputStream is) throws IOException {
-        return saveStrategy.doRead(is);
-    }
-
     @Override
     protected Resume doGet(Path path) {
         try {
-            return doRead(new BufferedInputStream(new FileInputStream(path.toFile())));
+            return saveStrategy.doRead(new BufferedInputStream(new FileInputStream(path.toFile())));
         } catch (IOException e) {
             throw new StorageException("Path read error", path.getFileName().toString(), e);
         }
@@ -65,7 +57,7 @@ public class PathStorage extends AbstractStorage<Path> {
     @Override
     protected void doUpdate(Resume resume, Path path) {
         try {
-            doWrite(resume, new BufferedOutputStream(new FileOutputStream(path.toFile())));
+            saveStrategy.doWrite(resume, new BufferedOutputStream(new FileOutputStream(path.toFile())));
         } catch (IOException e) {
             throw new StorageException("Path write error", resume.getUuid(), e);
         }
@@ -77,7 +69,7 @@ public class PathStorage extends AbstractStorage<Path> {
     }
 
     @Override
-    protected List<Resume> getListFromStorage() {
+    protected List<Resume> getAll() {
         List<Path> pathList;
         List<Resume> resumeList = new ArrayList<>();
         try {
