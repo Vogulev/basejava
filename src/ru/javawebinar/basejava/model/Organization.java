@@ -1,31 +1,38 @@
 package ru.javawebinar.basejava.model;
 
+import ru.javawebinar.basejava.util.LocaleDateAdapter;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.Month;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-public class Organization extends AbstractSection {
+import static ru.javawebinar.basejava.util.DateUtil.NOW;
+import static ru.javawebinar.basejava.util.DateUtil.of;
+
+@XmlAccessorType(XmlAccessType.FIELD)
+public class Organization implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private final List<Experience> experience;
+    private Link companyName;
+    private List<Position> position = new ArrayList<>();
 
-    public Organization(Experience... experiences) {
-        this(Arrays.asList(experiences));
+    public Organization() {
     }
 
-    public Organization(List<Experience> experience) {
-        Objects.requireNonNull(experience, "experience must not be null");
-        this.experience = experience;
+    public Organization(String title, String url, Position... positions) {
+        this(new Link(title, url), Arrays.asList(positions));
     }
 
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        for (Experience exp : experience) {
-            sb.append(exp.toString());
-        }
-        return sb.toString() + '\n';
+    public Organization(Link link, List<Position> position) {
+        this.companyName = link;
+        this.position = position;
     }
 
     @Override
@@ -33,47 +40,74 @@ public class Organization extends AbstractSection {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Organization that = (Organization) o;
-        return experience.equals(that.experience);
+        return Objects.equals(companyName, that.companyName) &&
+                Objects.equals(position, that.position);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(experience);
+        return Objects.hash(companyName, position);
     }
 
-    public static class Experience implements Serializable {
-        private static final long serialVersionUID = 1L;
+    @Override
+    public String toString() {
+        return '\n' +
+                companyName.getUrl() + '\n' +
+                position.toString();
+    }
 
-        private final Link companyName;
-        private final List<Position> position;
+    @XmlAccessorType(XmlAccessType.FIELD)
+    public static class Position implements Serializable {
+        @XmlJavaTypeAdapter(LocaleDateAdapter.class)
+        private LocalDate beginDate;
+        @XmlJavaTypeAdapter(LocaleDateAdapter.class)
+        private LocalDate endDate;
+        private String title;
+        private String description;
 
-        public Experience(String title, String url, Position... positions) {
-            this(new Link(title, url), Arrays.asList(positions));
+        public Position() {
         }
 
-        public Experience(Link link, List<Position> position) {
-            this.companyName = link;
-            this.position = position;
+        public Position(int beginYear, Month beginMonth, String title, String description) {
+            this(of(beginYear, beginMonth), NOW, title, description);
         }
 
-        @Override
-        public String toString() {
-            return '\n' +
-                    companyName.getUrl() + '\n' +
-                    position.toString();
+        public Position(int beginYear, Month beginMonth, int endYear, Month endMonth, String title, String description) {
+            this(of(beginYear, beginMonth), of(endYear, endMonth), title, description);
+        }
+
+        public Position(LocalDate beginDate, LocalDate endDate, String title, String description) {
+            Objects.requireNonNull(beginDate, "beginDate must not be null");
+            Objects.requireNonNull(endDate, "endDate must not be null!");
+            Objects.requireNonNull(title, "Position must not be null!");
+            this.beginDate = beginDate;
+            this.endDate = endDate;
+            this.title = title;
+            this.description = description;
         }
 
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
-            Experience that = (Experience) o;
-            return Objects.equals(companyName, that.companyName) && Objects.equals(position, that.position);
+            Position position = (Position) o;
+            return Objects.equals(beginDate, position.beginDate) &&
+                    Objects.equals(endDate, position.endDate) &&
+                    Objects.equals(title, position.title) &&
+                    Objects.equals(description, position.description);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(companyName, position);
+            return Objects.hash(beginDate, endDate, title, description);
+        }
+
+        @Override
+        public String toString() {
+            return "с " + beginDate +
+                    " по " + endDate + '\n' +
+                    title + '\n' +
+                    description;
         }
     }
 }
