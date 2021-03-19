@@ -21,6 +21,10 @@ public class ListSection extends AbstractSection {
         this.contentList = contentList;
     }
 
+    public List<String> getContentList() {
+        return contentList;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();

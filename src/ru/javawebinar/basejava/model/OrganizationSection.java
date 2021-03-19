@@ -7,7 +7,7 @@ import java.util.Objects;
 public class OrganizationSection extends AbstractSection {
     private static final long serialVersionUID = 1L;
 
-    private List<Organization> organization;
+    private List<Organization> organizations;
 
     public OrganizationSection() {
     }
@@ -16,15 +16,19 @@ public class OrganizationSection extends AbstractSection {
         this(Arrays.asList(organizations));
     }
 
-    public OrganizationSection(List<Organization> organization) {
-        Objects.requireNonNull(organization, "experience must not be null");
-        this.organization = organization;
+    public OrganizationSection(List<Organization> organizations) {
+        Objects.requireNonNull(organizations, "experience must not be null");
+        this.organizations = organizations;
+    }
+
+    public List<Organization> getOrganizations() {
+        return organizations;
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        for (Organization exp : organization) {
+        for (Organization exp : organizations) {
             sb.append(exp.toString());
         }
         return sb.toString() + '\n';
@@ -35,12 +39,12 @@ public class OrganizationSection extends AbstractSection {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         OrganizationSection that = (OrganizationSection) o;
-        return organization.equals(that.organization);
+        return organizations.equals(that.organizations);
     }
 
     @Override
     public int hashCode() {
-        return organization.hashCode();
+        return organizations.hashCode();
     }
 
 }
