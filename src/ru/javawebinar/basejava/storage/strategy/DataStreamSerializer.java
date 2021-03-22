@@ -5,8 +5,8 @@ import ru.javawebinar.basejava.model.*;
 import java.io.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 public class DataStreamSerializer implements SaveStrategy {
 
@@ -16,53 +16,41 @@ public class DataStreamSerializer implements SaveStrategy {
             dos.writeUTF(resume.getUuid());
             dos.writeUTF(resume.getFullName());
 
-            Map<ContactType, String> contacts = resume.getContacts();
-            dos.writeInt(contacts.size());
-            for (Map.Entry<ContactType, String> pair : contacts.entrySet()) {
+            writeWithException(resume.getContacts().entrySet(), dos, pair -> {
                 dos.writeUTF(pair.getKey().name());
                 dos.writeUTF(pair.getValue());
-            }
+            });
 
-            Map<SectionType, AbstractSection> sections = resume.getSections();
-            dos.writeInt(sections.size());
-            for (Map.Entry<SectionType, AbstractSection> pair : sections.entrySet()) {
+            writeWithException(resume.getSections().entrySet(), dos, pair -> {
                 SectionType type = pair.getKey();
                 AbstractSection section = pair.getValue();
+                dos.writeUTF(type.name());
                 switch (type) {
                     case OBJECTIVE:
                     case PERSONAL:
-                        dos.writeUTF(type.name());
                         dos.writeUTF(((TextSection) section).getContent());
                         break;
                     case ACHIEVEMENT:
                     case QUALIFICATIONS:
-                        dos.writeUTF(type.name());
                         List<String> contentList = ((ListSection) section).getContentList();
-                        dos.writeInt(contentList.size());
-                        for (String str : contentList) {
-                            dos.writeUTF(str);
-                        }
+                        writeWithException(contentList, dos, dos::writeUTF);
                         break;
                     case EXPERIENCE:
                     case EDUCATION:
-                        dos.writeUTF(type.name());
                         List<Organization> organizations = ((OrganizationSection) section).getOrganizations();
-                        dos.writeInt(organizations.size());
-                        for (Organization org : organizations) {
-                            List<Organization.Position> positions = org.getPosition();
-                            dos.writeInt(positions.size());
-                            for (Organization.Position position : positions) {
+                        writeWithException(organizations, dos, org -> {
+                            dos.writeUTF(org.getCompanyName().getTitle());
+                            dos.writeUTF(org.getCompanyName().getUrl());
+                            writeWithException(org.getPosition(), dos, position -> {
                                 writeDate(dos, position.getBeginDate());
                                 writeDate(dos, position.getEndDate());
                                 dos.writeUTF(position.getTitle());
                                 dos.writeUTF(position.getDescription());
-                            }
-                            dos.writeUTF(org.getCompanyName().getTitle());
-                            dos.writeUTF(org.getCompanyName().getUrl());
-                        }
+                            });
+                        });
                         break;
                 }
-            }
+            });
         }
     }
 
@@ -72,46 +60,72 @@ public class DataStreamSerializer implements SaveStrategy {
             String uuid = dis.readUTF();
             String fullName = dis.readUTF();
             Resume resume = new Resume(uuid, fullName);
-            int size = dis.readInt();
-            for (int i = 0; i < size; i++) {
-                resume.setContacts(ContactType.valueOf(dis.readUTF()), dis.readUTF());
-            }
-
-            size = dis.readInt();
-            for (int i = 0; i < size; i++) {
+            readWithException(dis, () -> resume.setContacts(ContactType.valueOf(dis.readUTF()), dis.readUTF()));
+            readWithException(dis, () -> {
                 SectionType section = SectionType.valueOf(dis.readUTF());
-                switch (section) {
-                    case OBJECTIVE:
-                    case PERSONAL:
-                        resume.setSections(section, new TextSection(dis.readUTF()));
-                        break;
-                    case ACHIEVEMENT:
-                    case QUALIFICATIONS:
-                        int listSize = dis.readInt();
-                        ArrayList<String> contentList = new ArrayList<>(listSize);
-                        for (int j = 0; j < listSize; j++) {
-                            contentList.add(dis.readUTF());
-                        }
-                        resume.setSections(section, new ListSection(contentList));
-                        break;
-                    case EXPERIENCE:
-                    case EDUCATION:
-                        int organizationsSize = dis.readInt();
-                        ArrayList<Organization> organizations = new ArrayList<>(organizationsSize);
-                        for (int j = 0; j < organizationsSize; j++) {
-                            int positionsSize = dis.readInt();
-                            ArrayList<Organization.Position> positions = new ArrayList<>(positionsSize);
-                            for (int x = 0; x < positionsSize; x++) {
-                                positions.add(new Organization.Position(readDate(dis), readDate(dis), dis.readUTF(), dis.readUTF()));
-                            }
-                            organizations.add(new Organization(new Link(dis.readUTF(), dis.readUTF()), positions));
-                        }
-                        resume.setSections(section, new OrganizationSection(organizations));
-                        break;
-                }
-            }
+                resume.setSections(section, readSection(dis, section));
+            });
             return resume;
         }
+    }
+
+    @FunctionalInterface
+    private interface writeConsumer<T> {
+        void action(T t) throws IOException;
+    }
+
+    @FunctionalInterface
+    private interface readProcessor {
+        void action() throws IOException;
+    }
+
+    @FunctionalInterface
+    private interface readSupplier<T> {
+        T get() throws IOException;
+    }
+
+    private <T> void writeWithException(Collection<T> collection, DataOutputStream dos, writeConsumer<T> write) throws IOException {
+        dos.writeInt(collection.size());
+        for (T c : collection) {
+            write.action(c);
+        }
+    }
+
+    private void readWithException(DataInputStream dis, readProcessor read) throws IOException {
+        int size = dis.readInt();
+        for (int i = 0; i < size; i++) {
+            read.action();
+        }
+    }
+
+    private AbstractSection readSection(DataInputStream dis, SectionType section) throws IOException{
+        switch (section) {
+            case OBJECTIVE:
+            case PERSONAL:
+                return new TextSection(dis.readUTF());
+            case ACHIEVEMENT:
+            case QUALIFICATIONS:
+                return new ListSection(readListWithException(dis, dis::readUTF));
+            case EXPERIENCE:
+            case EDUCATION:
+                return new OrganizationSection(
+                        readListWithException(dis, () -> new Organization( new Link(dis.readUTF(), dis.readUTF()),
+                                readListWithException(dis, () -> new Organization.Position(
+                                        readDate(dis), readDate(dis), dis.readUTF(), dis.readUTF()
+                        ))
+                )));
+            default:
+                throw new IllegalStateException();
+        }
+    }
+
+    private <T> List<T> readListWithException(DataInputStream dis, readSupplier<T> readList) throws IOException{
+        int size = dis.readInt();
+        List<T> resultList = new ArrayList<>(size);
+        for (int i = 0; i < size; i++) {
+            resultList.add(readList.get());
+        }
+        return resultList;
     }
 
     private void writeDate(DataOutputStream dos, LocalDate date) throws IOException {

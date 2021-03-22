@@ -184,8 +184,10 @@ public class ResumeTestData {
                                 "Тестирование, отладка, внедрение ПО цифровой телефонной станции Alcatel 1000 S12 (CHILL, ASM)."))))
         ))));
         resume.setSections(SectionType.EDUCATION, new OrganizationSection(new ArrayList<>((Arrays.asList(
+                new Organization(new Link("School #7", null), new ArrayList<>(Arrays.asList(
+                        new Organization.Position(LocalDate.of(2011, 3, 1), LocalDate.of(2011, 4, 1), "Курс \"Объектно-ориентированный анализ ИС. Концептуальное моделирование на UML.\"", "")))),
                 new Organization(new Link("Coursera", "https://www.coursera.org/course/progfun"), new ArrayList<>(Arrays.asList(
-                        new Organization.Position(DateUtil.of(2013, Month.MARCH), DateUtil.of(2013, Month.MAY), "\"Functional Programming Principles in Scala\" by Martin Odersky", "")))),
+                        new Organization.Position(DateUtil.of(2013, Month.MARCH), DateUtil.of(2013, Month.MAY), "\"Functional Programming Principles in Scala\" by Martin Odersky", null)))),
                 new Organization(new Link("Luxoft-Training", "http://www.luxoft-training.ru/training/catalog/course.html?ID=22366"), new ArrayList<>(Arrays.asList(
                         new Organization.Position(LocalDate.of(2011, 3, 1), LocalDate.of(2011, 4, 1), "Курс \"Объектно-ориентированный анализ ИС. Концептуальное моделирование на UML.\"", "")))),
                 new Organization(new Link("Siemens", "http://www.siemens.ru/"), new ArrayList<>(Arrays.asList(
@@ -197,6 +199,7 @@ public class ResumeTestData {
                         new Organization.Position(DateUtil.of(1987, Month.SEPTEMBER), DateUtil.of(1993, Month.JULY), "Инженер (программист Fortran, C)", "")))),
                 new Organization(new Link("MIPT", "http://www.school.mipt.ru/"), new ArrayList<>(Arrays.asList(
                         new Organization.Position(DateUtil.of(1984, Month.SEPTEMBER), DateUtil.of(1987, Month.JUNE), "Закончил с отличием", ""))))
+
         )))));
         //Print all contacts and sections
         System.out.println(resume);
