@@ -40,12 +40,14 @@ public class DataStreamSerializer implements SaveStrategy {
                         List<Organization> organizations = ((OrganizationSection) section).getOrganizations();
                         writeWithException(organizations, dos, org -> {
                             dos.writeUTF(org.getCompanyName().getTitle());
-                            dos.writeUTF(org.getCompanyName().getUrl() == null ? " " : org.getCompanyName().getUrl());
+                            String url = org.getCompanyName().getUrl();
+                            dos.writeUTF(url == null ? " " : url);
                             writeWithException(org.getPosition(), dos, position -> {
                                 writeDate(dos, position.getBeginDate());
                                 writeDate(dos, position.getEndDate());
                                 dos.writeUTF(position.getTitle());
-                                dos.writeUTF(position.getDescription() == null ? " " : position.getDescription());
+                                String description = position.getDescription();
+                                dos.writeUTF(description == null ? " " : description);
                             });
                         });
                         break;
@@ -109,9 +111,9 @@ public class DataStreamSerializer implements SaveStrategy {
             case EXPERIENCE:
             case EDUCATION:
                 return new OrganizationSection(
-                        readListWithException(dis, () -> new Organization(new Link(dis.readUTF(), nullStringAnalyzer(dis.readUTF())),
+                        readListWithException(dis, () -> new Organization(new Link(dis.readUTF(), checkStringForNull(dis.readUTF())),
                                 readListWithException(dis, () -> new Organization.Position(
-                                        readDate(dis), readDate(dis), dis.readUTF(), nullStringAnalyzer(dis.readUTF())
+                                        readDate(dis), readDate(dis), dis.readUTF(), checkStringForNull(dis.readUTF())
                                 ))
                         )));
             default:
@@ -119,7 +121,7 @@ public class DataStreamSerializer implements SaveStrategy {
         }
     }
 
-    private String nullStringAnalyzer(String str) {
+    private String checkStringForNull(String str) {
         return str.equals(" ") ? null : str;
     }
 
