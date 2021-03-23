@@ -56,10 +56,9 @@ public class ResumeTestData {
                         new Organization("JavaOps", "http://javaops.ru/",
                                 new Organization.Position(2013, Month.OCTOBER, "Автор проекта.",
                                         "Создание, организация и проведение Java онлайн проектов и стажировок.")),
-                        new Organization("Wrike", "https://www.wrike.com/",
+                        new Organization("Wrike", null,
                                 new Organization.Position(2014, Month.OCTOBER, 2016, Month.JANUARY, "Старший разработчик (backend)",
-                                        "Проектирование и разработка онлайн платформы управления проектами Wrike (Java 8 API, Maven, Spring, MyBatis, Guava, Vaadin, PostgreSQL, Redis). " +
-                                                "Двухфакторная аутентификация, авторизация по OAuth1, OAuth2, JWT SSO.")),
+                                        null)),
                         new Organization("RIT Center", "",
                                 new Organization.Position(2012, Month.APRIL, 2014, Month.OCTOBER, "Java архитектор",
                                         "Организация процесса разработки системы ERP для разных окружений: релизная политика, версионирование, ведение CI (Jenkins), миграция базы (кастомизация Flyway), " +

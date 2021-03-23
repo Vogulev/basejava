@@ -60,7 +60,7 @@ public class Organization implements Serializable {
     @Override
     public String toString() {
         return '\n' +
-                companyName.getUrl() + '\n' +
+                companyName.getTitle() + '\n' +
                 position.toString();
     }
 

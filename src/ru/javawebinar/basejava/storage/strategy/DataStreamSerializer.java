@@ -40,12 +40,12 @@ public class DataStreamSerializer implements SaveStrategy {
                         List<Organization> organizations = ((OrganizationSection) section).getOrganizations();
                         writeWithException(organizations, dos, org -> {
                             dos.writeUTF(org.getCompanyName().getTitle());
-                            dos.writeUTF(org.getCompanyName().getUrl());
+                            dos.writeUTF(org.getCompanyName().getUrl() == null ? " " : org.getCompanyName().getUrl());
                             writeWithException(org.getPosition(), dos, position -> {
                                 writeDate(dos, position.getBeginDate());
                                 writeDate(dos, position.getEndDate());
                                 dos.writeUTF(position.getTitle());
-                                dos.writeUTF(position.getDescription());
+                                dos.writeUTF(position.getDescription() == null ? " " : position.getDescription());
                             });
                         });
                         break;
@@ -70,35 +70,35 @@ public class DataStreamSerializer implements SaveStrategy {
     }
 
     @FunctionalInterface
-    private interface writeConsumer<T> {
+    private interface WriteConsumer<T> {
         void action(T t) throws IOException;
     }
 
     @FunctionalInterface
-    private interface readProcessor {
+    private interface ReadProcessor {
         void action() throws IOException;
     }
 
     @FunctionalInterface
-    private interface readSupplier<T> {
+    private interface ReadSupplier<T> {
         T get() throws IOException;
     }
 
-    private <T> void writeWithException(Collection<T> collection, DataOutputStream dos, writeConsumer<T> write) throws IOException {
+    private <T> void writeWithException(Collection<T> collection, DataOutputStream dos, WriteConsumer<T> write) throws IOException {
         dos.writeInt(collection.size());
         for (T c : collection) {
             write.action(c);
         }
     }
 
-    private void readWithException(DataInputStream dis, readProcessor read) throws IOException {
+    private void readWithException(DataInputStream dis, ReadProcessor read) throws IOException {
         int size = dis.readInt();
         for (int i = 0; i < size; i++) {
             read.action();
         }
     }
 
-    private AbstractSection readSection(DataInputStream dis, SectionType section) throws IOException{
+    private AbstractSection readSection(DataInputStream dis, SectionType section) throws IOException {
         switch (section) {
             case OBJECTIVE:
             case PERSONAL:
@@ -109,17 +109,21 @@ public class DataStreamSerializer implements SaveStrategy {
             case EXPERIENCE:
             case EDUCATION:
                 return new OrganizationSection(
-                        readListWithException(dis, () -> new Organization( new Link(dis.readUTF(), dis.readUTF()),
+                        readListWithException(dis, () -> new Organization(new Link(dis.readUTF(), nullStringAnalyzer(dis.readUTF())),
                                 readListWithException(dis, () -> new Organization.Position(
-                                        readDate(dis), readDate(dis), dis.readUTF(), dis.readUTF()
-                        ))
-                )));
+                                        readDate(dis), readDate(dis), dis.readUTF(), nullStringAnalyzer(dis.readUTF())
+                                ))
+                        )));
             default:
                 throw new IllegalStateException();
         }
     }
 
-    private <T> List<T> readListWithException(DataInputStream dis, readSupplier<T> readList) throws IOException{
+    private String nullStringAnalyzer(String str) {
+        return str.equals(" ") ? null : str;
+    }
+
+    private <T> List<T> readListWithException(DataInputStream dis, ReadSupplier<T> readList) throws IOException {
         int size = dis.readInt();
         List<T> resultList = new ArrayList<>(size);
         for (int i = 0; i < size; i++) {
