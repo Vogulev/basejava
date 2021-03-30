@@ -1,9 +1,8 @@
 package ru.javawebinar.basejava;
 
 public class MainDeadLock {
-    private static int counter;
-    private static final Object LOCK1 = new Object();
-    private static final Object LOCK2 = new Object();
+    private static final String LOCK1 = "Lock1";
+    private static final String LOCK2 = "Lock2";
 
 
     public static void main(String[] args) {
