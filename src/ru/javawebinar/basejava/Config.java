@@ -12,6 +12,7 @@ import java.util.Properties;
 public class Config {
     private static final File PROPS = new File("config/resumes.properties");
     private static final Config INSTANCE = new Config();
+    private final SqlStorage sqlStorage;
 
     private final File storageDir;
     private final String dbUrl;
@@ -33,6 +34,7 @@ public class Config {
         } catch (IOException e) {
             throw new IllegalStateException("Invalid config file " + PROPS.getAbsolutePath());
         }
+        sqlStorage = new SqlStorage(dbUrl, dbUser, dbPassword);
     }
 
     public File getStorageDir() {
@@ -40,6 +42,6 @@ public class Config {
     }
 
     public Storage getSqlStorage() {
-        return new SqlStorage(dbUrl, dbUser, dbPassword);
+        return sqlStorage;
     }
 }

@@ -25,7 +25,7 @@ public abstract class AbstractStorageTest {
 
     private static final Resume resume1 = ResumeTestData.createResume(UUID1, "Vasya");
     private static final Resume resume2 = ResumeTestData.createResume(UUID2, "Petya");
-    private static final Resume resume3 = ResumeTestData.createResume(UUID3, "Maksim");
+    private static final Resume resume3 = ResumeTestData.createResume(UUID3, "Vasya");
     private static final Resume resume4 = ResumeTestData.createResume(UUID4, "Artem");
 
     public AbstractStorageTest(Storage storage) {
@@ -90,7 +90,7 @@ public abstract class AbstractStorageTest {
     @Test
     public void getAllSorted() {
         List<Resume> getAllSortedResumes = storage.getAllSorted();
-        List<Resume> resumes = Arrays.asList(resume1, resume2, resume3);
+        List<Resume> resumes = Arrays.asList(resume3, resume1, resume2);
         Collections.sort(resumes);
         Assert.assertEquals(getAllSortedResumes.size(), resumes.size());
         Assert.assertEquals(getAllSortedResumes, resumes);

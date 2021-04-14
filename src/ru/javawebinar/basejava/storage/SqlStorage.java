@@ -7,7 +7,6 @@ import ru.javawebinar.basejava.sql.SqlHelper;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class SqlStorage implements Storage {
@@ -33,29 +32,25 @@ public class SqlStorage implements Storage {
 
     @Override
     public List<Resume> getAllSorted() {
-        List<Resume> resumeList = new ArrayList<>();
-        sqlHelper.execute("SELECT * from resume r", (ps) -> {
+        return sqlHelper.execute("SELECT * from resume r ORDER BY full_name, uuid", (ps) -> {
+            List<Resume> resumeList = new ArrayList<>();
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                resumeList.add(new Resume(rs.getString("uuid").trim(), rs.getString("full_name")));
+                resumeList.add(new Resume(rs.getString("uuid"), rs.getString("full_name")));
             }
-            Collections.sort(resumeList);
-            return null;
+            return resumeList;
         });
-        return resumeList;
     }
 
     @Override
     public void update(Resume resume) {
-        sqlHelper.execute("UPDATE resume SET full_name=? WHERE uuid =?", (rs) -> {
+        sqlHelper.execute("UPDATE resume SET full_name=? WHERE uuid =?", (ps) -> {
             String uuid = resume.getUuid();
-            rs.setString(1, resume.getFullName());
-            rs.setString(2, uuid);
-            int result = rs.executeUpdate();
-            if (result == 0) {
+            ps.setString(1, resume.getFullName());
+            ps.setString(2, uuid);
+            if (ps.executeUpdate() == 0) {
                 throw new NotExistStorageException(uuid);
             }
-            rs.execute();
             return null;
         });
     }
@@ -86,12 +81,9 @@ public class SqlStorage implements Storage {
     public void delete(String uuid) {
         sqlHelper.execute("DELETE from resume r where r.uuid =?", (ps) -> {
             ps.setString(1, uuid);
-            int result = ps.executeUpdate();
-            if (result == 0) {
+            if (ps.executeUpdate() == 0) {
                 throw new NotExistStorageException(uuid);
             }
-            ps.setString(1, uuid);
-            ps.execute();
             return null;
         });
     }
