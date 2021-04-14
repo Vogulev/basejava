@@ -1,5 +1,6 @@
 package ru.javawebinar.basejava.sql;
 
+import ru.javawebinar.basejava.exception.ExistStorageException;
 import ru.javawebinar.basejava.exception.StorageException;
 
 import java.sql.Connection;
@@ -25,31 +26,17 @@ public class SqlHelper {
     public <T> T execute(String sql, ABlockOfCode<T> aBlockOfCode) {
         try (Connection connection = connectionFactory.getConnection();
              PreparedStatement ps = connection.prepareStatement(sql)) {
-            return aBlockOfCode.execute(ps, null);
+            return aBlockOfCode.execute(ps);
         } catch (SQLException e) {
-            throw new StorageException(e);
+            checkException(e);
         }
+        return null;
     }
 
-    public <T> void execute(String sql1, String sql2, ABlockOfCode<T> aBlockOfCode) {
-        try (Connection connection = connectionFactory.getConnection();
-             PreparedStatement selectPs = connection.prepareStatement(sql1);
-             PreparedStatement executePs = connection.prepareStatement(sql2)) {
-            aBlockOfCode.execute(selectPs, executePs);
-        } catch (SQLException e) {
-            throw new StorageException(e);
+    public void checkException(SQLException e) {
+        if (e.getSQLState().equals("23505")) {
+            throw new ExistStorageException("uuid");
         }
+        throw new StorageException(e);
     }
-
-/*    public <T> void checkForException(String uuid, boolean condition) {
-        try (Connection connection = connectionFactory.getConnection();
-             PreparedStatement ps = connection.prepareStatement("SELECT * from resume r where r.uuid =?")) {
-            ps.setString(1, uuid);
-            if (condition) {
-                throw new NotExistStorageException(uuid);
-            }
-        } catch (SQLException e) {
-            throw new StorageException(e);
-        }
-    }*/
 }

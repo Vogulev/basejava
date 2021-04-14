@@ -5,5 +5,5 @@ import java.sql.SQLException;
 
 @FunctionalInterface
 public interface ABlockOfCode<T> {
-    T execute(PreparedStatement ps1, PreparedStatement ps2) throws SQLException;
+    T execute(PreparedStatement ps) throws SQLException;
 }
