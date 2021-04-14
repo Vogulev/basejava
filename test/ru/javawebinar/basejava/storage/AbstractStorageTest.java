@@ -10,8 +10,7 @@ import ru.javawebinar.basejava.exception.NotExistStorageException;
 import ru.javawebinar.basejava.model.Resume;
 
 import java.io.File;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public abstract class AbstractStorageTest {
 
@@ -19,15 +18,15 @@ public abstract class AbstractStorageTest {
 
     protected final Storage storage;
 
-    private static final String UUID1 = "uuid1";
-    private static final String UUID2 = "uuid2";
-    private static final String UUID3 = "uuid3";
-    private static final String UUID4 = "uuid4";
+    private static final String UUID1 = UUID.randomUUID().toString();
+    private static final String UUID2 = UUID.randomUUID().toString();
+    private static final String UUID3 = UUID.randomUUID().toString();
+    private static final String UUID4 = UUID.randomUUID().toString();
 
-    private static final Resume resume1 = ResumeTestData.createResume(UUID1, "Name" + UUID1);
-    private static final Resume resume2 = ResumeTestData.createResume(UUID2, "Name" + UUID2);
-    private static final Resume resume3 = ResumeTestData.createResume(UUID3, "Name" + UUID3);
-    private static final Resume resume4 = ResumeTestData.createResume(UUID4, "Name" + UUID4);
+    private static final Resume resume1 = ResumeTestData.createResume(UUID1, "Vasya");
+    private static final Resume resume2 = ResumeTestData.createResume(UUID2, "Petya");
+    private static final Resume resume3 = ResumeTestData.createResume(UUID3, "Maksim");
+    private static final Resume resume4 = ResumeTestData.createResume(UUID4, "Artem");
 
     public AbstractStorageTest(Storage storage) {
         this.storage = storage;
@@ -92,6 +91,7 @@ public abstract class AbstractStorageTest {
     public void getAllSorted() {
         List<Resume> getAllSortedResumes = storage.getAllSorted();
         List<Resume> resumes = Arrays.asList(resume1, resume2, resume3);
+        Collections.sort(resumes);
         Assert.assertEquals(getAllSortedResumes.size(), resumes.size());
         Assert.assertEquals(getAllSortedResumes, resumes);
     }
