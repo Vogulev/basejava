@@ -62,7 +62,7 @@ public class DataStreamSerializer implements SaveStrategy {
             String uuid = dis.readUTF();
             String fullName = dis.readUTF();
             Resume resume = new Resume(uuid, fullName);
-            readWithException(dis, () -> resume.setContacts(ContactType.valueOf(dis.readUTF()), dis.readUTF()));
+            readWithException(dis, () -> resume.setContact(ContactType.valueOf(dis.readUTF()), dis.readUTF()));
             readWithException(dis, () -> {
                 SectionType section = SectionType.valueOf(dis.readUTF());
                 resume.setSections(section, readSection(dis, section));

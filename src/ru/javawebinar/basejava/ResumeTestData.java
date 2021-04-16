@@ -1,20 +1,21 @@
 package ru.javawebinar.basejava;
 
+import ru.javawebinar.basejava.model.ContactType;
 import ru.javawebinar.basejava.model.Resume;
 
 public class ResumeTestData {
 
     public static Resume createResume(String uuid, String fullName) {
         Resume resume = new Resume(uuid, fullName);
-  /*      resume.setContacts(ContactType.TELEPHONE, "+7(921) 855-0482");
-        resume.setContacts(ContactType.SKYPE, "grigory.kislin");
-        resume.setContacts(ContactType.MAIL, "gkislin@yandex.ru");
-        resume.setContacts(ContactType.LINKEDIN, "https://www.linkedin.com/in/gkislin/");
-        resume.setContacts(ContactType.GITHUB, "https://github.com/gkislin");
-        resume.setContacts(ContactType.STACKOVERFLOW, "https://stackoverflow.com/users/548473/grigory-kislin");
-        resume.setContacts(ContactType.HOMEPAGE, "http://gkislin.ru/");
+        resume.setContact(ContactType.TELEPHONE, "+7(921) 855-0482");
+        resume.setContact(ContactType.SKYPE, "grigory.kislin");
+        resume.setContact(ContactType.MAIL, "gkislin@yandex.ru");
+        resume.setContact(ContactType.LINKEDIN, "https://www.linkedin.com/in/gkislin/");
+        resume.setContact(ContactType.GITHUB, "https://github.com/gkislin");
+        resume.setContact(ContactType.STACKOVERFLOW, "https://stackoverflow.com/users/548473/grigory-kislin");
+        resume.setContact(ContactType.HOMEPAGE, "http://gkislin.ru/");
         //Fill resume ListSection fields
-        resume.setSections(SectionType.OBJECTIVE, new TextSection("Ведущий стажировок и корпоративного обучения по Java Web и Enterprise технологиям"));
+ /*       resume.setSections(SectionType.OBJECTIVE, new TextSection("Ведущий стажировок и корпоративного обучения по Java Web и Enterprise технологиям"));
         resume.setSections(SectionType.PERSONAL, new TextSection("Аналитический склад ума, сильная логика, креативность, инициативность. Пурист кода и архитектуры."));
         resume.setSections(SectionType.ACHIEVEMENT, new ListSection(new ArrayList<>(Arrays.asList(
                 "С 2013 года: разработка проектов \"Разработка Web приложения\",\"Java Enterprise\", \"Многомодульный maven. Многопоточность. XML (JAXB/StAX). Веб сервисы (JAX-RS/SOAP). Удаленное взаимодействие (JMS/AKKA)\". " +

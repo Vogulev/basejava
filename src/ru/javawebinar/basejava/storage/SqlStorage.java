@@ -1,13 +1,15 @@
 package ru.javawebinar.basejava.storage;
 
 import ru.javawebinar.basejava.exception.NotExistStorageException;
+import ru.javawebinar.basejava.exception.StorageException;
+import ru.javawebinar.basejava.model.ContactType;
 import ru.javawebinar.basejava.model.Resume;
 import ru.javawebinar.basejava.sql.SqlHelper;
 
-import java.sql.DriverManager;
-import java.sql.ResultSet;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class SqlStorage implements Storage {
     private final SqlHelper sqlHelper;
@@ -32,49 +34,78 @@ public class SqlStorage implements Storage {
 
     @Override
     public List<Resume> getAllSorted() {
-        return sqlHelper.execute("SELECT * from resume r ORDER BY full_name, uuid", (ps) -> {
-            List<Resume> resumeList = new ArrayList<>();
+        List<Resume> resumeList = new ArrayList<>();
+        sqlHelper.execute("SELECT * from resume ORDER BY full_name, uuid", ps -> {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                resumeList.add(new Resume(rs.getString("uuid"), rs.getString("full_name")));
+                resumeList.add(get(rs.getString("uuid")));
             }
-            return resumeList;
+            return null;
         });
+        return resumeList;
     }
 
     @Override
     public void update(Resume resume) {
-        sqlHelper.execute("UPDATE resume SET full_name=? WHERE uuid =?", (ps) -> {
-            String uuid = resume.getUuid();
-            ps.setString(1, resume.getFullName());
-            ps.setString(2, uuid);
-            if (ps.executeUpdate() == 0) {
-                throw new NotExistStorageException(uuid);
-            }
-            return null;
-        });
+        sqlHelper.transactionalExecute(connection -> {
+                    try (PreparedStatement ps = connection.prepareStatement("UPDATE resume SET full_name=? WHERE uuid =?")) {
+                        ps.setString(1, resume.getFullName());
+                        ps.setString(2, resume.getUuid());
+                        if (ps.executeUpdate() == 0) {
+                            throw new NotExistStorageException(resume.getUuid());
+                        }
+                    }
+                    deleteContacts(resume.getUuid());
+                    insertContacts(connection, resume);
+                    return null;
+                }
+        );
     }
 
     @Override
     public void save(Resume resume) {
-        sqlHelper.execute("INSERT INTO resume(uuid, full_name) VALUES (?,?)", (ps) -> {
-            ps.setString(1, resume.getUuid());
-            ps.setString(2, resume.getFullName());
-            ps.execute();
-            return null;
-        });
+        sqlHelper.transactionalExecute(connection -> {
+                    try (PreparedStatement ps = connection.prepareStatement("INSERT INTO resume(uuid, full_name) VALUES (?,?)")) {
+                        ps.setString(1, resume.getUuid());
+                        ps.setString(2, resume.getFullName());
+                        ps.execute();
+                    }
+                    try (PreparedStatement ps = connection.prepareStatement("INSERT INTO contact(resume_uuid, type, value) VALUES (?,?,?)")) {
+                        for (Map.Entry<ContactType, String> entry : resume.getContacts().entrySet()) {
+                            ps.setString(1, resume.getUuid());
+                            ps.setString(2, entry.getKey().name());
+                            ps.setString(3, entry.getValue());
+                            ps.addBatch();
+                        }
+                        ps.executeBatch();
+                    }
+                    return null;
+                }
+        );
     }
 
     @Override
     public Resume get(String uuid) {
-        return sqlHelper.execute("SELECT * from resume r where r.uuid =?", (ps) -> {
-            ps.setString(1, uuid);
-            ResultSet rs = ps.executeQuery();
-            if (!rs.next()) {
-                throw new NotExistStorageException(uuid);
-            }
-            return new Resume(uuid, rs.getString("full_name"));
-        });
+        return sqlHelper.execute("" +
+                        "    SELECT * from resume r" +
+                        " LEFT JOIN contact c" +
+                        "        ON r.uuid = c.resume_uuid" +
+                        "     WHERE r.uuid =? ",
+                (ps) -> {
+                    ps.setString(1, uuid);
+                    ResultSet rs = ps.executeQuery();
+                    if (!rs.next()) {
+                        throw new NotExistStorageException(uuid);
+                    }
+                    Resume resume = new Resume(uuid, rs.getString("full_name"));
+                    do {
+                        String value = rs.getString("value");
+                        if (value != null) {
+                            resume.setContact(ContactType.valueOf(rs.getString("type")), value);
+                        }
+                    } while (rs.next());
+                    return resume;
+                });
     }
 
     @Override
@@ -87,5 +118,28 @@ public class SqlStorage implements Storage {
             return null;
         });
     }
+
+    private void deleteContacts(String uuid) {
+        sqlHelper.execute("DELETE from contact where resume_uuid =?", (ps) -> {
+            ps.setString(1, uuid);
+            ps.execute();
+            return null;
+        });
+    }
+
+    private void insertContacts(Connection connection, Resume resume) {
+        try (PreparedStatement ps = connection.prepareStatement("INSERT INTO contact(resume_uuid, type, value) VALUES (?,?,?)")) {
+            for (Map.Entry<ContactType, String> entry : resume.getContacts().entrySet()) {
+                ps.setString(1, resume.getUuid());
+                ps.setString(2, entry.getKey().name());
+                ps.setString(3, entry.getValue());
+                ps.addBatch();
+            }
+            ps.executeBatch();
+        } catch (SQLException e) {
+            throw new StorageException(e);
+        }
+    }
+
 }
 

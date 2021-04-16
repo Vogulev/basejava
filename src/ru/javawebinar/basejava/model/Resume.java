@@ -29,7 +29,6 @@ public class Resume implements Comparable<Resume>, Serializable {
     public Resume() {
     }
 
-
     public Resume(String uuid, String fullName) {
         Objects.requireNonNull(uuid, "UUID must not be null!");
         Objects.requireNonNull(fullName, "fullName must not be null!");
@@ -53,7 +52,7 @@ public class Resume implements Comparable<Resume>, Serializable {
         return sections;
     }
 
-    public void setContacts(ContactType contactType, String contact) {
+    public void setContact(ContactType contactType, String contact) {
         contacts.put(contactType, contact);
     }
 

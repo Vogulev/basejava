@@ -15,12 +15,7 @@ public class SqlHelper {
     }
 
     public void execute(String sql) {
-        try (Connection connection = connectionFactory.getConnection();
-             PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.execute();
-        } catch (SQLException e) {
-            throw new StorageException(e);
-        }
+        execute(sql, PreparedStatement::execute);
     }
 
     public <T> T execute(String sql, ABlockOfCode<T> aBlockOfCode) {
@@ -29,6 +24,23 @@ public class SqlHelper {
             return aBlockOfCode.execute(ps);
         } catch (SQLException e) {
             checkException(e);
+        }
+        return null;
+    }
+
+    public <T> T transactionalExecute(SqlTransaction<T> executor) {
+        try (Connection connection = connectionFactory.getConnection()) {
+            try {
+                connection.setAutoCommit(false);
+                T res = executor.execute(connection);
+                connection.commit();
+                return res;
+            } catch (SQLException e) {
+                connection.rollback();
+                checkException(e);
+            }
+        } catch (SQLException e) {
+            throw new StorageException(e);
         }
         return null;
     }
