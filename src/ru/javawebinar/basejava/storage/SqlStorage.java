@@ -1,7 +1,6 @@
 package ru.javawebinar.basejava.storage;
 
 import ru.javawebinar.basejava.exception.NotExistStorageException;
-import ru.javawebinar.basejava.exception.StorageException;
 import ru.javawebinar.basejava.model.ContactType;
 import ru.javawebinar.basejava.model.Resume;
 import ru.javawebinar.basejava.sql.SqlHelper;
@@ -41,12 +40,9 @@ public class SqlStorage implements Storage {
             do {
                 String uuid = rs.getString("uuid");
                 if (!resumes.containsKey(uuid)) {
-                    resumes.put(rs.getString("uuid"), new Resume(rs.getString("uuid"), rs.getString("full_name")));
+                    resumes.put(uuid, new Resume(uuid, rs.getString("full_name")));
                 }
-                String value = rs.getString("value");
-                if (value != null) {
-                    resumes.get(uuid).setContact(ContactType.valueOf(rs.getString("type")), value);
-                }
+                addContactToResume(rs.getString("type"), rs.getString("value"), resumes.get(uuid));
             }while (rs.next());
             return null;
         });
@@ -67,7 +63,7 @@ public class SqlStorage implements Storage {
                         }
                     }
                     deleteContacts(connection, uuid);
-                    insertContacts(connection, resume);
+            insertContacts(connection, resume);
                     return null;
                 }
         );
@@ -81,7 +77,7 @@ public class SqlStorage implements Storage {
                         ps.setString(2, resume.getFullName());
                         ps.execute();
                     }
-                    insertContacts(connection, resume);
+            insertContacts(connection, resume);
                     return null;
                 }
         );
@@ -102,10 +98,7 @@ public class SqlStorage implements Storage {
                     }
                     Resume resume = new Resume(uuid, rs.getString("full_name"));
                     do {
-                        String value = rs.getString("value");
-                        if (value != null) {
-                            resume.setContact(ContactType.valueOf(rs.getString("type")), value);
-                        }
+                        addContactToResume(rs.getString("type"), rs.getString("value"), resume);
                     } while (rs.next());
                     return resume;
                 });
@@ -122,28 +115,31 @@ public class SqlStorage implements Storage {
         });
     }
 
-    private void deleteContacts(Connection connection, String uuid) {
+    private void deleteContacts(Connection connection, String uuid) throws SQLException {
         try (PreparedStatement ps = connection.prepareStatement("DELETE from contact where resume_uuid =?")) {
             ps.setString(1, uuid);
             ps.execute();
-        } catch (SQLException e) {
-            throw new StorageException(e);
         }
     }
 
-    private void insertContacts(Connection connection, Resume resume) {
-        if (resume.getContacts().size() != 0) {
+    private void insertContacts(Connection connection, Resume resume) throws SQLException {
+        Map<ContactType, String> contacts = resume.getContacts();
+        if (contacts.size() != 0) {
             try (PreparedStatement ps = connection.prepareStatement("INSERT INTO contact(resume_uuid, type, value) VALUES (?,?,?)")) {
-                for (Map.Entry<ContactType, String> entry : resume.getContacts().entrySet()) {
+                for (Map.Entry<ContactType, String> entry : contacts.entrySet()) {
                     ps.setString(1, resume.getUuid());
                     ps.setString(2, entry.getKey().name());
                     ps.setString(3, entry.getValue());
                     ps.addBatch();
                 }
                 ps.executeBatch();
-            } catch (SQLException e) {
-                throw new StorageException(e);
             }
+        }
+    }
+
+    private void addContactToResume(String type, String value, Resume resume) {
+        if (value != null) {
+            resume.setContact(ContactType.valueOf(type), value);
         }
     }
 }
