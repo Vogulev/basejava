@@ -1,0 +1,15 @@
+header {
+    background: none repeat scroll 0 0 #ef0a2d;
+    color: burlywood;
+    font-size: 20px;
+    font-weight: bolder;
+    padding: 5px 20px;
+}
+
+footer {
+    background: none repeat scroll 0 0 #ef0a2d;
+    color: burlywood;
+    font-size: 20px;
+    padding: 5px 20px;
+    margin: 20px 0;
+}
