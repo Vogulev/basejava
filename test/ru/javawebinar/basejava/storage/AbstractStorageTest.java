@@ -9,6 +9,8 @@ import ru.javawebinar.basejava.exception.ExistStorageException;
 import ru.javawebinar.basejava.exception.NotExistStorageException;
 import ru.javawebinar.basejava.model.ContactType;
 import ru.javawebinar.basejava.model.Resume;
+import ru.javawebinar.basejava.model.SectionType;
+import ru.javawebinar.basejava.model.TextSection;
 
 import java.io.File;
 import java.util.*;
@@ -100,9 +102,12 @@ public abstract class AbstractStorageTest {
     @Test
     public void update() {
         Resume newResume = new Resume(UUID1, "New FullName");
-        resume1.setContact(ContactType.MAIL, "mail@gmail.com");
-        resume1.setContact(ContactType.SKYPE, "newSkype");
-        resume1.setContact(ContactType.TELEPHONE, "+7(921)222-22-22");
+        newResume.setContact(ContactType.MAIL, "mail@gmail.com");
+        newResume.setContact(ContactType.SKYPE, "newSkype");
+        newResume.setContact(ContactType.TELEPHONE, "+7(921)222-22-22");
+        newResume.setSections(SectionType.OBJECTIVE, new TextSection("Ведущий стажировок и корпоративного обучения по Java Web и Enterprise технологиям"));
+        newResume.setSections(SectionType.PERSONAL, new TextSection("Аналитический склад ума, сильная логика, креативность, инициативность. Пурист кода и архитектуры."));
+
         storage.update(newResume);
         Assert.assertEquals(newResume, storage.get(UUID1));
     }

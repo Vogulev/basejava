@@ -1,7 +1,9 @@
 package ru.javawebinar.basejava;
 
-import ru.javawebinar.basejava.model.ContactType;
-import ru.javawebinar.basejava.model.Resume;
+import ru.javawebinar.basejava.model.*;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class ResumeTestData {
 
@@ -15,7 +17,7 @@ public class ResumeTestData {
         resume.setContact(ContactType.STACKOVERFLOW, "https://stackoverflow.com/users/548473/grigory-kislin");
         resume.setContact(ContactType.HOMEPAGE, "http://gkislin.ru/");
         //Fill resume ListSection fields
- /*       resume.setSections(SectionType.OBJECTIVE, new TextSection("Ведущий стажировок и корпоративного обучения по Java Web и Enterprise технологиям"));
+        resume.setSections(SectionType.OBJECTIVE, new TextSection("Ведущий стажировок и корпоративного обучения по Java Web и Enterprise технологиям"));
         resume.setSections(SectionType.PERSONAL, new TextSection("Аналитический склад ума, сильная логика, креативность, инициативность. Пурист кода и архитектуры."));
         resume.setSections(SectionType.ACHIEVEMENT, new ListSection(new ArrayList<>(Arrays.asList(
                 "С 2013 года: разработка проектов \"Разработка Web приложения\",\"Java Enterprise\", \"Многомодульный maven. Многопоточность. XML (JAXB/StAX). Веб сервисы (JAX-RS/SOAP). Удаленное взаимодействие (JMS/AKKA)\". " +
@@ -46,7 +48,7 @@ public class ResumeTestData {
                 "Родной русский, английский \"upper intermediate\"")
         )));
         //Fill resume Organization fields
-        resume.setSections(SectionType.EXPERIENCE,
+        /*resume.setSections(SectionType.EXPERIENCE,
                 new OrganizationSection(
                         new Organization("JavaOps", "http://javaops.ru/",
                                 new Organization.Position(2013, Month.OCTOBER, "Автор проекта.",
