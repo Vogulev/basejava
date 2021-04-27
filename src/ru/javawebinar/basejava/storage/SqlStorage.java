@@ -35,54 +35,42 @@ public class SqlStorage implements Storage {
 
     @Override
     public List<Resume> getAllSorted() {
-        Map<String, Resume> resumes = new HashMap<>();
-        sqlHelper.transactionalExecute(connection -> {
-                    try (PreparedStatement ps = connection.prepareStatement("SELECT * from resume")) {
+        return sqlHelper.transactionalExecute(connection -> {
+                    Map<String, Resume> resumes = new LinkedHashMap<>();
+                    try (PreparedStatement ps = connection.prepareStatement("SELECT * from resume ORDER BY full_name, uuid")) {
                         ResultSet rs = ps.executeQuery();
-                        if (!rs.next()) {
-                            throw new NotExistStorageException(null);
-                        }
-                        do {
+                        while (rs.next()) {
                             String uuid = rs.getString("uuid");
                             if (!resumes.containsKey(uuid)) {
                                 resumes.put(uuid, new Resume(uuid, rs.getString("full_name")));
                             }
-                        } while (rs.next());
+                        }
                     }
                     try (PreparedStatement ps = connection.prepareStatement("SELECT * from contact")) {
                         ResultSet rs = ps.executeQuery();
-                        if (!rs.next()) {
-                            throw new NotExistStorageException(null);
-                        }
-                        do {
+                        while (rs.next()) {
                             String uuid = rs.getString("resume_uuid");
                             for (Map.Entry<String, Resume> pair : resumes.entrySet()) {
                                 if (pair.getKey().equals(uuid)) {
                                     addContactToResume(rs.getString("type"), rs.getString("value"), pair.getValue());
                                 }
                             }
-                        } while (rs.next());
+                        }
                     }
                     try (PreparedStatement ps = connection.prepareStatement("SELECT * from section")) {
                         ResultSet rs = ps.executeQuery();
-                        if (!rs.next()) {
-                            throw new NotExistStorageException(null);
-                        }
-                        do {
+                        while (rs.next()) {
                             String uuid = rs.getString("resume_uuid");
                             for (Map.Entry<String, Resume> pair : resumes.entrySet()) {
                                 if (pair.getKey().equals(uuid)) {
                                     addSectionToResume(rs.getString("type"), rs.getString("value"), pair.getValue());
                                 }
                             }
-                        } while (rs.next());
+                        }
                     }
-                    return null;
+                    return new ArrayList<>(resumes.values());
                 }
         );
-        List<Resume> resumesList = new ArrayList<>(resumes.values());
-        Collections.sort(resumesList);
-        return resumesList;
     }
 
     @Override
@@ -142,8 +130,6 @@ public class SqlStorage implements Storage {
                 ps.setString(1, uuid);
                 ResultSet rs = ps.executeQuery();
                 while (rs.next()) {
-                    String st1 = rs.getString("type");
-                    String st2 = rs.getString("value");
                     addSectionToResume(rs.getString("type"), rs.getString("value"), resume);
                 }
             }
@@ -198,11 +184,14 @@ public class SqlStorage implements Storage {
                     AbstractSection value = entry.getValue();
                     ps.setString(1, resume.getUuid());
                     ps.setString(2, type.name());
-                    if (type == SectionType.ACHIEVEMENT || type == SectionType.QUALIFICATIONS) {
-                        ps.setString(3,
-                                String.join("\n", ((ListSection) value).getContentList()));
-                    } else {
-                        ps.setString(3, String.valueOf(value));
+                    switch (type) {
+                        case OBJECTIVE:
+                        case PERSONAL:
+                            ps.setString(3, String.valueOf(value));
+                            break;
+                        case ACHIEVEMENT:
+                        case QUALIFICATIONS:
+                            ps.setString(3, String.join("\n", ((ListSection) value).getContentList()));
                     }
                     ps.addBatch();
                 }
@@ -220,14 +209,18 @@ public class SqlStorage implements Storage {
     private void addSectionToResume(String type, String value, Resume resume) {
         if (value != null) {
             SectionType sectionType = SectionType.valueOf(type);
-            if (sectionType == SectionType.OBJECTIVE || sectionType == SectionType.PERSONAL) {
-                resume.setSections(sectionType, new TextSection(value.trim()));
-            } else {
-                List<String> sectionList = new ArrayList<>();
-                for (String string : List.of(value.split("\n"))) {
-                    sectionList.add(string.trim());
-                }
-                resume.setSections(sectionType, new ListSection(sectionList));
+            switch (sectionType) {
+                case OBJECTIVE:
+                case PERSONAL:
+                    resume.setSections(sectionType, new TextSection(value.trim()));
+                    break;
+                case ACHIEVEMENT:
+                case QUALIFICATIONS:
+                    List<String> sectionList = new ArrayList<>();
+                    for (String string : value.split("\n")) {
+                        sectionList.add(string.trim());
+                    }
+                    resume.setSections(sectionType, new ListSection(sectionList));
             }
         }
     }
