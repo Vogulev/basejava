@@ -4,7 +4,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import ru.javawebinar.basejava.Config;
-import ru.javawebinar.basejava.ResumeTestData;
 import ru.javawebinar.basejava.exception.ExistStorageException;
 import ru.javawebinar.basejava.exception.NotExistStorageException;
 import ru.javawebinar.basejava.model.ContactType;
@@ -13,23 +12,17 @@ import ru.javawebinar.basejava.model.SectionType;
 import ru.javawebinar.basejava.model.TextSection;
 
 import java.io.File;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import static ru.javawebinar.basejava.TestData.*;
 
 public abstract class AbstractStorageTest {
 
     protected static final File STORAGE_DIR = Config.getInstance().getStorageDir();
 
     protected final Storage storage;
-
-    private static final String UUID1 = UUID.randomUUID().toString();
-    private static final String UUID2 = UUID.randomUUID().toString();
-    private static final String UUID3 = UUID.randomUUID().toString();
-    private static final String UUID4 = UUID.randomUUID().toString();
-
-    private static final Resume resume1 = ResumeTestData.createResume(UUID1, "Vasya");
-    private static final Resume resume2 = ResumeTestData.createResume(UUID2, "Petya");
-    private static final Resume resume3 = ResumeTestData.createResume(UUID3, "Vasya");
-    private static final Resume resume4 = ResumeTestData.createResume(UUID4, "Artem");
 
     public AbstractStorageTest(Storage storage) {
         this.storage = storage;

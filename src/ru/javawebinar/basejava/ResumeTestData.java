@@ -2,6 +2,7 @@ package ru.javawebinar.basejava;
 
 import ru.javawebinar.basejava.model.*;
 
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -48,7 +49,7 @@ public class ResumeTestData {
                 "Родной русский, английский \"upper intermediate\"")
         )));
         //Fill resume Organization fields
-        /*resume.setSections(SectionType.EXPERIENCE,
+        resume.setSections(SectionType.EXPERIENCE,
                 new OrganizationSection(
                         new Organization("JavaOps", "http://javaops.ru/",
                                 new Organization.Position(2013, Month.OCTOBER, "Автор проекта.",
@@ -101,7 +102,7 @@ public class ResumeTestData {
                                         "Инженер (программист Fortran, C)", "")),
                         new Organization("MIPT", "http://www.school.mipt.ru/",
                                 new Organization.Position(1984, Month.SEPTEMBER, 1987, Month.JUNE, "Закончил с отличием", ""))
-                ));*/
+                ));
         return resume;
     }
 }
