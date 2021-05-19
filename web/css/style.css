@@ -1,5 +1,5 @@
 header {
-    background: none repeat scroll 0 0 #ef0a2d;
+    background: none repeat scroll 0 0 #1d9292;
     color: burlywood;
     font-size: 20px;
     font-weight: bolder;
@@ -7,7 +7,7 @@ header {
 }
 
 footer {
-    background: none repeat scroll 0 0 #ef0a2d;
+    background: none repeat scroll 0 0 #1d9292;
     color: burlywood;
     font-size: 20px;
     padding: 5px 20px;
@@ -16,4 +16,21 @@ footer {
 
 table, th, td {
     border: 1px solid black;
+}
+
+dl {
+    background: none repeat scroll 0 0 #FAFAFA;
+    margin: 8px 0;
+    padding: 0;
+}
+
+dt {
+    display: inline-block;
+    width: 170px;
+}
+
+dd {
+    display: inline-block;
+    margin-left: 8px;
+    vertical-align: top;
 }

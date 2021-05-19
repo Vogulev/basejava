@@ -48,6 +48,10 @@ public class Resume implements Comparable<Resume>, Serializable {
         return contacts;
     }
 
+    public String getContact(ContactType contactType) {
+        return contacts.get(contactType);
+    }
+
     public Map<SectionType, AbstractSection> getSections() {
         return sections;
     }
