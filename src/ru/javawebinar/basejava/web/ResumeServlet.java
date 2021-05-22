@@ -1,8 +1,7 @@
 package ru.javawebinar.basejava.web;
 
 import ru.javawebinar.basejava.Config;
-import ru.javawebinar.basejava.model.ContactType;
-import ru.javawebinar.basejava.model.Resume;
+import ru.javawebinar.basejava.model.*;
 import ru.javawebinar.basejava.storage.Storage;
 
 import javax.servlet.ServletConfig;
@@ -40,6 +39,10 @@ public class ResumeServlet extends HttpServlet {
             case "edit":
                 resume = storage.get(uuid);
                 break;
+            case "add":
+                resume = new Resume("");
+                storage.save(resume);
+                break;
             default:
                 throw new IllegalStateException("Action " + action + " is illegal");
         }
@@ -62,6 +65,22 @@ public class ResumeServlet extends HttpServlet {
                 resume.setContact(type, value);
             } else {
                 resume.getContacts().remove(type);
+            }
+        }
+        for (SectionType type : SectionType.values()) {
+            String value = request.getParameter(type.name());
+            if (value != null) {
+                switch (type) {
+                    case OBJECTIVE:
+                    case PERSONAL:
+                        resume.setSections(type, new TextSection(value));
+                        break;
+                    case QUALIFICATIONS:
+                    case ACHIEVEMENT:
+                        resume.setSections(type, new ListSection(value));
+                }
+            } else {
+                resume.getSections().remove(type);
             }
         }
         storage.update(resume);

@@ -28,7 +28,7 @@
         <c:forEach var="sectionEntry" items="${resume.sections}">
             <jsp:useBean id="sectionEntry"
                          type="java.util.Map.Entry<ru.javawebinar.basejava.model.SectionType, ru.javawebinar.basejava.model.AbstractSection>"/>
-
+            <%=sectionEntry.getKey().toHtml(sectionEntry.getValue())%><br/><br/>
         </c:forEach>
     </p>
 </section>

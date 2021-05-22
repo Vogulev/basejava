@@ -16,20 +16,20 @@
         <input type="hidden" name="uuid" value="${resume.uuid}">
         <dl>
             <dt>Имя:</dt>
-            <dd><input type="text" name="fullName" size="50" value="${resume.fullName}"></dd>
+            <dd><input type="text" name="fullName" size="50" value=""></dd>
         </dl>
         <h3>Контакты:</h3>
-            <c:forEach var="type" items="<%=ContactType.values()%>">
-        <dl>
-            <dt>${type.title}</dt>
-            <dd><input type="text" name="${type.name()}" size=30 value="${resume.getContact(type)}"></dd>
-        </dl>
-        </c:forEach>
-        <h3>Секции:</h3>
-        <c:forEach var="type" items="<%=SectionType.values()%>">
+        <c:forEach var="type" items="">
             <dl>
                 <dt>${type.title}</dt>
-                <dd><textarea name="${type.name()}" rows=10 cols=100>${resume.getSection(type)}</textarea></dd>
+                <dd><input type="text" name="${type.name()}" size=30 value=""></dd>
+            </dl>
+        </c:forEach>
+        <h3>Секции:</h3>
+        <c:forEach var="type" items="">
+            <dl>
+                <dt>${type.title}</dt>
+                <dd><textarea name="${type.name()}" rows=10 cols=100></textarea></dd>
             </dl>
         </c:forEach>
         <hr>
