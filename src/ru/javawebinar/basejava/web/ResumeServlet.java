@@ -37,11 +37,12 @@ public class ResumeServlet extends HttpServlet {
                 return;
             case "view":
             case "edit":
-                resume = storage.get(uuid);
-                break;
-            case "add":
-                resume = new Resume("");
-                storage.save(resume);
+                if (uuid == null) {
+                    resume = new Resume("");
+                    storage.save(resume);
+                } else {
+                    resume = storage.get(uuid);
+                }
                 break;
             default:
                 throw new IllegalStateException("Action " + action + " is illegal");
