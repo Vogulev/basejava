@@ -19,18 +19,46 @@
             <dd><input type="text" name="fullName" size="50" value="${resume.fullName}"></dd>
         </dl>
         <h3>Контакты:</h3>
-            <c:forEach var="type" items="<%=ContactType.values()%>">
-        <dl>
-            <dt>${type.title}</dt>
-            <dd><input type="text" name="${type.name()}" size=30 value="${resume.getContact(type)}"></dd>
-        </dl>
+        <c:forEach var="type" items="<%=ContactType.values()%>">
+            <dl>
+                <dt>${type.title}</dt>
+                <dd><input type="text" name="${type.name()}" size=30 value="${resume.getContact(type)}"></dd>
+            </dl>
         </c:forEach>
         <h3>Секции:</h3>
         <c:forEach var="type" items="<%=SectionType.values()%>">
-            <dl>
-                <dt>${type.title}</dt>
-                <dd><textarea name="${type.name()}" rows=10 cols=100>${resume.getSection(type)}</textarea></dd>
-            </dl>
+            <c:choose>
+                <c:when test="${type == SectionType.OBJECTIVE || type == SectionType.PERSONAL}">
+                    <dl>
+                        <dt>${type.title}</dt>
+                        <dd><input type="text" name="${type.name()}" size=107 value="${resume.getSection(type)}"></dd>
+                    </dl>
+                </c:when>
+                <c:when test="${type == SectionType.ACHIEVEMENT || type == SectionType.QUALIFICATIONS}">
+                    <c:set var="listSection" value="${resume.getSection(type)}"/>
+                    <jsp:useBean id="listSection"
+                                 type="ru.javawebinar.basejava.model.ListSection"/>
+                    <dl>
+                        <dt>${type.title}</dt>
+                        <dd><textarea name="${type.name()}" rows=10 cols=100>
+                        <c:forEach var="achievement" items="<%=listSection.getContentList()%>">
+                            <jsp:useBean id="achievement"
+                                         type="java.lang.String"/>
+                            ${achievement}
+                        </c:forEach>
+                    </textarea>
+                        <dd>
+                    </dl>
+                </c:when>
+
+                <c:when test="${type == SectionType.EXPERIENCE || type == SectionType.EDUCATION}">
+                    <dl>
+                        <dt>${type.title}</dt>
+                        <dd><textarea name="${type.name()}" rows=10 cols=100>${resume.getSection(type)}</textarea></dd>
+                    </dl>
+                </c:when>
+
+            </c:choose>
         </c:forEach>
         <hr>
         <button type="submit">Сохранить</button>

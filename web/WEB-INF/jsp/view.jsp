@@ -28,8 +28,47 @@
         <c:forEach var="sectionEntry" items="${resume.sections}">
             <jsp:useBean id="sectionEntry"
                          type="java.util.Map.Entry<ru.javawebinar.basejava.model.SectionType, ru.javawebinar.basejava.model.AbstractSection>"/>
-            <%=sectionEntry.getKey().toHtml(sectionEntry.getValue())%><br/><br/>
-        </c:forEach>
+    <h4><%=sectionEntry.getKey().getTitle()%>
+    </h4>
+    <c:choose>
+        <c:when test="${sectionEntry.key == SectionType.OBJECTIVE || sectionEntry.key == SectionType.PERSONAL}">
+            <%=sectionEntry.getValue()%>
+        </c:when>
+        <c:when test="${sectionEntry.key == SectionType.ACHIEVEMENT || sectionEntry.key == SectionType.QUALIFICATIONS}">
+            <c:set var="listSection" value="${sectionEntry.value}"/>
+            <jsp:useBean id="listSection"
+                         type="ru.javawebinar.basejava.model.ListSection"/>
+            <c:forEach var="achievement" items="${listSection.contentList}">
+                <jsp:useBean id="achievement"
+                             type="java.lang.String"/>
+                ➫ <%=achievement%><br/>
+            </c:forEach>
+        </c:when>
+        <c:when test="${sectionEntry.key == SectionType.EDUCATION || sectionEntry.key == SectionType.EXPERIENCE}">
+            <c:set var="organizationSection" value="${sectionEntry.value}"/>
+            <jsp:useBean id="organizationSection"
+                         type="ru.javawebinar.basejava.model.OrganizationSection"/>
+            <c:set var="organizationList" value="${organizationSection.organizations}"/>
+            <jsp:useBean id="organizationList"
+                         type="java.util.List"/>
+            <c:forEach var="organization" items="${organizationList}">
+                <jsp:useBean id="organization"
+                             type="ru.javawebinar.basejava.model.Organization"/>
+                <c:set var="positionList" value="${organization.position}"/>
+                <jsp:useBean id="positionList"
+                             type="java.util.List"/>
+                ➫ <%=organization.getCompanyName().getTitle()%><br/>
+                <c:forEach var="position" items="${positionList}">
+                    <jsp:useBean id="position"
+                                 type="ru.javawebinar.basejava.model.Organization.Position"/>
+                    <%=position.getBeginDate()%> - <%=position.getEndDate()%><br/>
+                    <%=position.getTitle()%><br/>
+                    <%=position.getDescription()%><br/>
+                </c:forEach>
+            </c:forEach>
+        </c:when>
+    </c:choose>
+    </c:forEach>
     </p>
 </section>
 <jsp:include page="fragments/footer.jsp"/>
