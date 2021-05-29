@@ -1,8 +1,5 @@
-<%@ page import="ru.javawebinar.basejava.model.Resume" %>
 <%@ page import="java.util.List" %>
-<%@ page import="ru.javawebinar.basejava.model.ContactType" %>
-<%@ page import="ru.javawebinar.basejava.model.SectionType" %>
-<%@ page import="ru.javawebinar.basejava.model.AbstractSection" %>
+<%@ page import="ru.javawebinar.basejava.model.*" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
@@ -28,23 +25,22 @@
         <c:forEach var="sectionEntry" items="${resume.sections}">
             <jsp:useBean id="sectionEntry"
                          type="java.util.Map.Entry<ru.javawebinar.basejava.model.SectionType, ru.javawebinar.basejava.model.AbstractSection>"/>
-    <h4><%=sectionEntry.getKey().getTitle()%>
-    </h4>
+                <c:set var="type" value="${sectionEntry.key}"/>
+                <c:set var="section" value="${sectionEntry.value}"/>
+                <jsp:useBean id="section" type="ru.javawebinar.basejava.model.AbstractSection"/>
+    <h4>${type.title}</h4>
     <c:choose>
-        <c:when test="${sectionEntry.key == SectionType.OBJECTIVE || sectionEntry.key == SectionType.PERSONAL}">
-            <%=sectionEntry.getValue()%>
+        <c:when test="${type == SectionType.OBJECTIVE || type == SectionType.PERSONAL}">
+            <%=((TextSection)section).getContent()%>
         </c:when>
-        <c:when test="${sectionEntry.key == SectionType.ACHIEVEMENT || sectionEntry.key == SectionType.QUALIFICATIONS}">
-            <c:set var="listSection" value="${sectionEntry.value}"/>
-            <jsp:useBean id="listSection"
-                         type="ru.javawebinar.basejava.model.ListSection"/>
-            <c:forEach var="achievement" items="${listSection.contentList}">
-                <jsp:useBean id="achievement"
-                             type="java.lang.String"/>
-                ➫ <%=achievement%><br/>
+        <c:when test="${type == SectionType.ACHIEVEMENT || type == SectionType.QUALIFICATIONS}">
+            <c:forEach var="achievement" items="<%=((ListSection)section).getContentList()%>">
+                <c:if test="${!achievement.blank}">
+                ➫ ${achievement}<br/>
+                </c:if>
             </c:forEach>
         </c:when>
-        <c:when test="${sectionEntry.key == SectionType.EDUCATION || sectionEntry.key == SectionType.EXPERIENCE}">
+        <c:when test="${type == SectionType.EDUCATION || type == SectionType.EXPERIENCE}">
             <c:set var="organizationSection" value="${sectionEntry.value}"/>
             <jsp:useBean id="organizationSection"
                          type="ru.javawebinar.basejava.model.OrganizationSection"/>
@@ -58,12 +54,17 @@
                 <jsp:useBean id="positionList"
                              type="java.util.List"/>
                 ➫ <%=organization.getCompanyName().getTitle()%><br/>
+                <c:if test="${organization.getCompanyName().getUrl() != null}">
+                <%=organization.getCompanyName().getUrl()%><br/>
+                </c:if>
                 <c:forEach var="position" items="${positionList}">
                     <jsp:useBean id="position"
                                  type="ru.javawebinar.basejava.model.Organization.Position"/>
                     <%=position.getBeginDate()%> - <%=position.getEndDate()%><br/>
                     <%=position.getTitle()%><br/>
+                    <c:if test="${position.description != null}">
                     <%=position.getDescription()%><br/>
+                    </c:if>
                 </c:forEach>
             </c:forEach>
         </c:when>

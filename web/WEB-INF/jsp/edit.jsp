@@ -58,7 +58,11 @@
                             <dd><input type="text" name="${type.name()}" size=20
                                        value="<%=organization.getCompanyName().getTitle()%>"></dd>
                         </dl>
-                        <br/>
+                        <dl>
+                            <dt>URL:</dt>
+                            <dd><input type="text" name="${type.name()}" size=20
+                                       value="<%=organization.getCompanyName().getUrl()%>"></dd>
+                        </dl>
                         <c:forEach var="position" items="${positionList}">
                             <jsp:useBean id="position"
                                          type="ru.javawebinar.basejava.model.Organization.Position"/>
@@ -72,13 +76,11 @@
                                 <dd><input type="text" name="${type.name()}" size=20 value="<%=position.getEndDate()%>">
                                 </dd>
                             </dl>
-                            <br/>
                             <dl>
                                 <dt>Позиция:</dt>
                                 <dd><input type="text" name="${type.name()}" size=20 value="<%=position.getTitle()%>">
                                 </dd>
                             </dl>
-                            <br/>
                             <dl>
                                 <dt>Описание:</dt>
                                 <dd><textarea name="${type.name()}" rows=10
@@ -86,7 +88,62 @@
                             </dl>
                             <br/>
                         </c:forEach>
+                        <h3><a>Добавить новую позицию:</a></h3>
+                        </dl>
+                        <dl>
+                            <dt>Начальная дата:</dt>
+                            <dd><input type="text" name="${type.name()}" size=20
+                                       value=""></dd>
+                        </dl>
+                        <dl>
+                            <dt>Конечная дата:</dt>
+                            <dd><input type="text" name="${type.name()}" size=20 value="">
+                            </dd>
+                        </dl>
+                        <dl>
+                            <dt>Позиция:</dt>
+                            <dd><input type="text" name="${type.name()}" size=20 value="">
+                            </dd>
+                        </dl>
+                        <dl>
+                            <dt>Описание:</dt>
+                            <dd><textarea name="${type.name()}" rows=10
+                                          cols=100></textarea></dd>
+                        </dl>
+                        <br/>
                     </c:forEach>
+                    <h3><a>Добавить новую организацию:</a></h3>
+                    <dl>
+                        <dt>Название организации</dt>
+                        <dd><input type="text" name="${type.name()}" size=20
+                                   value=""></dd>
+                    </dl>
+                    <dl>
+                        <dt>URL:</dt>
+                        <dd><input type="text" name="${type.name()}" size=20
+                                   value=""></dd>
+                    </dl>
+                    <dl>
+                        <dt>Начальная дата:</dt>
+                        <dd><input type="text" name="${type.name()}" size=20
+                                   value=""></dd>
+                    </dl>
+                    <dl>
+                        <dt>Конечная дата:</dt>
+                        <dd><input type="text" name="${type.name()}" size=20 value="">
+                        </dd>
+                    </dl>
+                    <dl>
+                        <dt>Позиция:</dt>
+                        <dd><input type="text" name="${type.name()}" size=20 value="">
+                        </dd>
+                    </dl>
+                    <dl>
+                        <dt>Описание:</dt>
+                        <dd><textarea name="${type.name()}" rows=10
+                                      cols=100></textarea></dd>
+                    </dl>
+                    <br/>
                 </c:when>
             </c:choose>
         </c:forEach>

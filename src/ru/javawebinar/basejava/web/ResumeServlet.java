@@ -39,6 +39,12 @@ public class ResumeServlet extends HttpServlet {
             case "edit":
                 if (uuid == null) {
                     resume = new Resume("");
+                    resume.setSections(SectionType.PERSONAL, new TextSection(""));
+                    resume.setSections(SectionType.OBJECTIVE, new TextSection(""));
+                    resume.setSections(SectionType.ACHIEVEMENT, new ListSection(""));
+                    resume.setSections(SectionType.QUALIFICATIONS, new ListSection(""));
+                    resume.setSections(SectionType.EXPERIENCE, new OrganizationSection(new Organization("", "", new Organization.Position())));
+                    resume.setSections(SectionType.EDUCATION, new OrganizationSection(new Organization("", "",new Organization.Position())));
                     storage.save(resume);
                 } else {
                     resume = storage.get(uuid);
@@ -78,7 +84,7 @@ public class ResumeServlet extends HttpServlet {
                         break;
                     case QUALIFICATIONS:
                     case ACHIEVEMENT:
-                        resume.setSections(type, new ListSection(value));
+                        resume.setSections(type, new ListSection(value.split("\\n")));
                 }
             } else {
                 resume.getSections().remove(type);
