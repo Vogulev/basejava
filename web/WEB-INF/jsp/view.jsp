@@ -1,5 +1,6 @@
 <%@ page import="java.util.List" %>
 <%@ page import="ru.javawebinar.basejava.model.*" %>
+<%@ page import="ru.javawebinar.basejava.util.HtmlUtil" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
@@ -22,54 +23,66 @@
         </c:forEach>
     </p>
     <p>
+    <hr>
+    <table cellpadding="2">
         <c:forEach var="sectionEntry" items="${resume.sections}">
-            <jsp:useBean id="sectionEntry"
-                         type="java.util.Map.Entry<ru.javawebinar.basejava.model.SectionType, ru.javawebinar.basejava.model.AbstractSection>"/>
-                <c:set var="type" value="${sectionEntry.key}"/>
-                <c:set var="section" value="${sectionEntry.value}"/>
-                <jsp:useBean id="section" type="ru.javawebinar.basejava.model.AbstractSection"/>
-    <h4>${type.title}</h4>
-    <c:choose>
-        <c:when test="${type == SectionType.OBJECTIVE || type == SectionType.PERSONAL}">
-            <%=((TextSection)section).getContent()%>
-        </c:when>
-        <c:when test="${type == SectionType.ACHIEVEMENT || type == SectionType.QUALIFICATIONS}">
-            <c:forEach var="achievement" items="<%=((ListSection)section).getContentList()%>">
-                <c:if test="${!achievement.blank}">
-                ➫ ${achievement}<br/>
-                </c:if>
-            </c:forEach>
-        </c:when>
-        <c:when test="${type == SectionType.EDUCATION || type == SectionType.EXPERIENCE}">
-            <c:set var="organizationSection" value="${sectionEntry.value}"/>
-            <jsp:useBean id="organizationSection"
-                         type="ru.javawebinar.basejava.model.OrganizationSection"/>
-            <c:set var="organizationList" value="${organizationSection.organizations}"/>
-            <jsp:useBean id="organizationList"
-                         type="java.util.List"/>
-            <c:forEach var="organization" items="${organizationList}">
-                <jsp:useBean id="organization"
-                             type="ru.javawebinar.basejava.model.Organization"/>
-                <c:set var="positionList" value="${organization.position}"/>
-                <jsp:useBean id="positionList"
-                             type="java.util.List"/>
-                ➫ <%=organization.getCompanyName().getTitle()%><br/>
-                <c:if test="${organization.getCompanyName().getUrl() != null}">
-                <%=organization.getCompanyName().getUrl()%><br/>
-                </c:if>
-                <c:forEach var="position" items="${positionList}">
-                    <jsp:useBean id="position"
-                                 type="ru.javawebinar.basejava.model.Organization.Position"/>
-                    <%=position.getBeginDate()%> - <%=position.getEndDate()%><br/>
-                    <%=position.getTitle()%><br/>
-                    <c:if test="${position.description != null}">
-                    <%=position.getDescription()%><br/>
-                    </c:if>
+        <jsp:useBean id="sectionEntry"
+                     type="java.util.Map.Entry<ru.javawebinar.basejava.model.SectionType, ru.javawebinar.basejava.model.AbstractSection>"/>
+        <c:set var="type" value="${sectionEntry.key}"/>
+        <c:set var="section" value="${sectionEntry.value}"/>
+        <jsp:useBean id="section" type="ru.javawebinar.basejava.model.AbstractSection"/>
+
+        <tr>
+            <td><h3><a name="type.name">${type.title}</a></h3></td>
+        </tr>
+        <c:choose>
+            <c:when test="${type == SectionType.OBJECTIVE || type == SectionType.PERSONAL}">
+                <tr>
+                    <td>
+                        <%=((TextSection) section).getContent()%>
+                    </td>
+                </tr>
+            </c:when>
+            <c:when test="${type == SectionType.ACHIEVEMENT || type == SectionType.QUALIFICATIONS}">
+                <tr>
+                    <td>
+                        <ul>
+                            <c:forEach var="achievement" items="<%=((ListSection)section).getContentList()%>">
+                                <li>${achievement}</li>
+                            </c:forEach>
+                        </ul>
+                    </td>
+                </tr>
+            </c:when>
+            <c:when test="${type == SectionType.EDUCATION || type == SectionType.EXPERIENCE}">
+                <c:forEach var="org" items="<%=((OrganizationSection) section).getOrganizations()%>">
+                    <tr>
+                        <td>
+                            <c:choose>
+                                <c:when test="${empty org.companyName.url}">
+                                    <h3>${org.companyName.title}</h3>
+                                </c:when>
+                                <c:otherwise>
+                                    <h3><a href="${org.companyName.url}">${org.companyName.title}</a></h3>
+                                </c:otherwise>
+                            </c:choose>
+                        </td>
+                    </tr>
+                    <c:forEach var="position" items="${org.position}">
+                        <jsp:useBean id="position" type="ru.javawebinar.basejava.model.Organization.Position"/>
+                        <tr>
+                            <td>
+                                <%=HtmlUtil.formatDates(position)%>
+                            </td>
+                            <td><b>${position.title}</b><br>${position.description}</td>
+                        </tr>
+                    </c:forEach>
                 </c:forEach>
-            </c:forEach>
-        </c:when>
-    </c:choose>
+            </c:when>
+        </c:choose>
     </c:forEach>
+    </table>
+    <button onclick="window.history.back()">OK</button>
     </p>
 </section>
 <jsp:include page="fragments/footer.jsp"/>
